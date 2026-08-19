@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/ledger-event.schema.json",
+  "title": "CausalPerf Ledger Event",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "run_id", "sequence", "occurred_at", "actor", "phase", "kind", "inputs", "outputs", "previous_sha256", "event_sha256"],
+  "properties": {
+    "schema_version": {"const": 1}, "run_id": {"type": "string", "minLength": 1}, "sequence": {"type": "integer", "minimum": 0},
+    "occurred_at": {"type": "string", "format": "date-time"}, "actor": {"enum": ["AGENT", "RUNNER", "EVALUATOR", "HUMAN"]},
+    "phase": {"type": "string", "minLength": 1}, "kind": {"enum": ["INTENT", "COMPLETION", "FAILURE", "APPROVAL", "DECISION"]},
+    "inputs": {"type": "array", "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}, "outputs": {"type": "array", "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "approval_id": {"type": "string"}, "exit_status": {"type": "integer"},
+    "previous_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}, "event_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

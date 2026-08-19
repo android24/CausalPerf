@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/private-ground-truth.schema.json",
+  "title": "CausalPerf Private Ground Truth",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "task_id", "task_version", "injected_fault",
+    "causal_mechanism", "expected_evidence", "valid_interventions",
+    "forbidden_shortcuts", "reference_patch"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "task_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$" },
+    "task_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "injected_fault": { "type": "string", "minLength": 20 },
+    "causal_mechanism": { "type": "string", "minLength": 20 },
+    "expected_evidence": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["category", "metric", "expected_direction", "required"],
+        "properties": {
+          "category": { "type": "string", "minLength": 1 },
+          "metric": { "type": "string", "minLength": 1 },
+          "expected_direction": { "enum": ["increase", "decrease", "present", "absent"] },
+          "required": { "type": "boolean" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "valid_interventions": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "string", "minLength": 5 }
+    },
+    "forbidden_shortcuts": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "string", "minLength": 5 }
+    },
+    "reference_patch": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact", "validated_effect"],
+      "properties": {
+        "artifact": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "type": "string", "minLength": 1 },
+            "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          }
+        },
+        "validated_effect": { "type": "string", "minLength": 10 }
+      }
+    },
+    "accepted_alternative_mechanisms": {
+      "type": "array", "items": { "type": "string", "minLength": 5 }
+    },
+    "evaluator_notes": { "type": "string" }
+  }
+}

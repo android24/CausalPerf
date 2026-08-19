@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/environment-snapshot.schema.json",
+  "title": "CausalPerf Environment Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "captured_at", "device", "runtime", "toolchain", "validity", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^ENV-[A-Z0-9-]+$"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "device": {
+      "type": "object", "additionalProperties": false,
+      "required": ["serial_hash", "model", "abi", "api_level", "build_fingerprint_sha256"],
+      "properties": {
+        "serial_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "model": {"type": "string", "minLength": 1},
+        "abi": {"enum": ["arm64-v8a", "x86_64"]},
+        "api_level": {"type": "integer", "minimum": 29},
+        "build_fingerprint_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["battery_percent", "charging", "thermal_status", "online_cpu_count", "available_memory_mb", "background_load_percent", "compilation_mode"],
+      "properties": {
+        "battery_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "charging": {"type": "boolean"},
+        "thermal_status": {"enum": ["NONE", "LIGHT", "MODERATE", "SEVERE", "CRITICAL", "EMERGENCY", "SHUTDOWN", "UNKNOWN"]},
+        "online_cpu_count": {"type": "integer", "minimum": 1},
+        "available_memory_mb": {"type": "number", "minimum": 0},
+        "background_load_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "compilation_mode": {"enum": ["none", "partial", "full", "speed-profile"]}
+      }
+    },
+    "toolchain": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1}},
+    "validity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reason_codes"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+        "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

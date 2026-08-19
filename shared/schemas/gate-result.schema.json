@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/gate-result.schema.json",
+  "title": "CausalPerf Gate Result",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "gate_id", "gate_version", "evaluated_at", "status", "reason_codes", "input_sha256", "output_sha256"],
+  "properties": {
+    "schema_version": {"const": 1}, "gate_id": {"type": "string", "minLength": 1}, "gate_version": {"type": "string", "minLength": 1},
+    "evaluated_at": {"type": "string", "format": "date-time"}, "status": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+    "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "summary": {"type": "string"},
+    "input_sha256": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "uniqueItems": true},
+    "output_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

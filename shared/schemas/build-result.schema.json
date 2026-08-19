@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/build-result.schema.json",
+  "title": "CausalPerf Build Result",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "id", "run_id", "partition", "started_at", "completed_at", "source_artifact_id", "command_request_sha256", "status", "toolchain", "output_artifact_ids", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": 1}, "id": {"type": "string", "pattern": "^BR-[A-Z0-9-]+$"}, "run_id": {"type": "string", "minLength": 1},
+    "partition": {"enum": ["DEVELOPMENT", "CALIBRATION", "QUALIFICATION", "EVALUATION"]}, "started_at": {"type": "string", "format": "date-time"}, "completed_at": {"type": "string", "format": "date-time"},
+    "source_artifact_id": {"type": "string", "pattern": "^AR-[A-Z0-9-]+$"}, "patch_artifact_id": {"type": "string", "pattern": "^AR-[A-Z0-9-]+$"},
+    "command_request_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "status": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+    "toolchain": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1}},
+    "output_artifact_ids": {"type": "array", "items": {"type": "string", "pattern": "^AR-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "allOf": [{"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"properties": {"output_artifact_ids": {"minItems": 1}}}}]
+}

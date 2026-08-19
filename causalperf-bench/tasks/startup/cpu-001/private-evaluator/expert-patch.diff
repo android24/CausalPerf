@@ -1,0 +1,13 @@
+diff --git a/app/src/main/java/dev/causalperf/startup/cpu/LookupTable.kt b/app/src/main/java/dev/causalperf/startup/cpu/LookupTable.kt
+--- a/app/src/main/java/dev/causalperf/startup/cpu/LookupTable.kt
++++ b/app/src/main/java/dev/causalperf/startup/cpu/LookupTable.kt
+@@ -8,7 +8,7 @@ object LookupTable {
+  */
+ object LookupTable {
+     const val SIZE = 4_096
+-    private const val REDUNDANT_PASSES = 20_000
++    private const val REDUNDANT_PASSES = 1
+ 
+     fun build(): IntArray {
+         val table = IntArray(SIZE)
+

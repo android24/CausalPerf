@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/tool-call.schema.json",
+  "title": "CausalPerf Tool Call",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "id", "run_id", "requested_at", "tool_id", "risk", "request_sha256", "arguments", "policy_decision", "status"],
+  "properties": {
+    "schema_version": {"const": 1}, "id": {"type": "string", "pattern": "^TC-[A-Z0-9-]+$"}, "run_id": {"type": "string", "minLength": 1},
+    "requested_at": {"type": "string", "format": "date-time"}, "started_at": {"type": "string", "format": "date-time"}, "completed_at": {"type": "string", "format": "date-time"},
+    "tool_id": {"type": "string", "minLength": 1}, "risk": {"enum": ["R0", "R1", "R2", "R3", "R4"]},
+    "request_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "arguments": {"type": "object"},
+    "policy_decision": {"type": "object", "additionalProperties": false, "required": ["status", "reason_codes"], "properties": {"status": {"enum": ["ALLOW", "DENY", "REQUIRE_APPROVAL"]}, "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "approval_id": {"type": "string", "pattern": "^AP-[A-Z0-9-]+$"}}},
+    "status": {"enum": ["REQUESTED", "DENIED", "APPROVAL_PENDING", "RUNNING", "SUCCEEDED", "FAILED", "TIMED_OUT"]},
+    "output_artifact_ids": {"type": "array", "items": {"type": "string", "pattern": "^AR-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "exit_code": {"type": "integer"}, "failure_code": {"type": "string"}
+  },
+  "allOf": [
+    {"if": {"properties": {"policy_decision": {"properties": {"status": {"const": "REQUIRE_APPROVAL"}}}}}, "then": {"properties": {"policy_decision": {"required": ["approval_id"]}}}},
+    {"if": {"properties": {"status": {"enum": ["SUCCEEDED", "FAILED", "TIMED_OUT"]}}}, "then": {"required": ["started_at", "completed_at"]}}
+  ]
+}

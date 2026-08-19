@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/hypothesis.schema.json",
+  "title": "CausalPerf Hypothesis",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "id", "created_at", "mechanism", "supporting_evidence_ids", "contradicting_evidence_ids", "alternatives", "state", "prediction_ids", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^H-[A-Z0-9-]+$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "mechanism": {"type": "string", "minLength": 20},
+    "supporting_evidence_ids": {"type": "array", "items": {"type": "string", "pattern": "^EV-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "contradicting_evidence_ids": {"type": "array", "items": {"type": "string", "pattern": "^EV-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "alternatives": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 10}},
+    "state": {"enum": ["PROPOSED", "REGISTERED", "FALSIFIED", "SUPPORTED"]},
+    "prediction_ids": {"type": "array", "items": {"type": "string", "pattern": "^PR-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

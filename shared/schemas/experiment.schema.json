@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/experiment.schema.json",
+  "title": "CausalPerf Experiment Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "run_id", "task_id", "prediction_id", "design",
+    "arms", "gates", "statistics", "mechanism", "replication", "decision"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "run_id": { "type": "string", "minLength": 1 },
+    "task_id": { "type": "string", "minLength": 1 },
+    "prediction_id": { "type": "string", "minLength": 1 },
+    "prediction_registered_at": { "type": "string", "format": "date-time" },
+    "first_treatment_at": { "type": "string", "format": "date-time" },
+    "design": { "enum": ["randomized_interleaved", "a1_b_a2", "blocked_ab"] },
+    "arms": {
+      "type": "object", "additionalProperties": false,
+      "required": ["a1", "treatment", "a2"],
+      "properties": {
+        "a1": { "$ref": "#/$defs/measurements" },
+        "treatment": { "$ref": "#/$defs/measurements" },
+        "a2": { "$ref": "#/$defs/measurements" }
+      }
+    },
+    "gates": {
+      "type": "object", "additionalProperties": false,
+      "required": ["integrity", "correctness", "environment"],
+      "properties": {
+        "integrity": { "$ref": "#/$defs/gate" },
+        "correctness": { "$ref": "#/$defs/gate" },
+        "environment": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "statistics": { "$ref": "#/$defs/gate" },
+    "mechanism": { "$ref": "#/$defs/gate" },
+    "replication": { "$ref": "#/$defs/gate" },
+    "decision": { "enum": ["CAUSALLY_SUPPORTED", "EXPERIMENTALLY_SUPPORTED", "REJECT", "INCONCLUSIVE", "INVALID"] },
+    "ledger_head_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "measurements": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "number", "minimum": 0 }
+    },
+    "gate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reason_codes"],
+      "properties": {
+        "status": { "enum": ["PASS", "FAIL", "INCONCLUSIVE"] },
+        "reason_codes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

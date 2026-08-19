@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/artifact.schema.json",
+  "title": "CausalPerf Artifact",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "id", "run_id", "partition", "kind", "created_at", "producer", "media_type", "size_bytes", "sha256", "retention"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^AR-[A-Z0-9-]+$"},
+    "run_id": {"type": "string", "minLength": 1},
+    "partition": {"enum": ["DEVELOPMENT", "CALIBRATION", "QUALIFICATION", "EVALUATION"]},
+    "kind": {"enum": ["SOURCE_TREE", "PATCH", "APK", "AAB", "TEST_RESULT", "BENCHMARK_RESULT", "TRACE", "LOG", "REPORT", "MANIFEST", "OTHER"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "producer": {"type": "object", "additionalProperties": false, "required": ["id", "version"], "properties": {"id": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}}},
+    "relative_path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "media_type": {"type": "string", "minLength": 1},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "derived_from": {"type": "array", "items": {"type": "string", "pattern": "^AR-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "retention": {"enum": ["EPHEMERAL", "RUN", "TASK_VERSION", "PERMANENT"]},
+    "sensitivity": {"enum": ["PUBLIC", "AGENT_INTERNAL", "EVALUATOR_PRIVATE"]}
+  }
+}

@@ -1,0 +1,49 @@
+schema_version: 1
+default_network: denied
+tools:
+  - id: inspect_source
+    risk: R0
+    approval: task
+    side_effects: none
+    idempotent: true
+  - id: query_trace
+    risk: R0
+    approval: task
+    side_effects: none
+    idempotent: true
+  - id: inspect_device
+    risk: R0
+    approval: task
+    side_effects: none
+    idempotent: true
+  - id: build_variant
+    risk: R1
+    approval: task
+    side_effects: build_artifacts
+    idempotent: false
+  - id: install_apk
+    risk: R1
+    approval: task
+    side_effects: target_package_on_resolved_device
+    idempotent: false
+  - id: run_benchmark
+    risk: R1
+    approval: task
+    side_effects: device_execution_and_artifacts
+    idempotent: false
+  - id: apply_patch
+    risk: R2
+    approval: per_intervention_digest
+    side_effects: declared_source_paths
+    idempotent: false
+  - id: rollback_patch
+    risk: R2
+    approval: inherited_from_intervention
+    side_effects: declared_source_paths
+    idempotent: false
+  - id: publish_patch
+    risk: R4
+    approval: explicit_external_write
+    side_effects: external_repository
+    idempotent: false
+

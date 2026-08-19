@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/evidence.schema.json",
+  "title": "CausalPerf Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "category", "metric", "value", "unit", "source"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^EV-[A-Z0-9-]+$" },
+    "category": { "type": "string", "minLength": 1 },
+    "metric": { "type": "string", "minLength": 1 },
+    "value": { "type": ["number", "integer", "string", "boolean"] },
+    "unit": { "type": "string", "minLength": 1 },
+    "start_ts_ns": { "type": "integer", "minimum": 0 },
+    "end_ts_ns": { "type": "integer", "minimum": 0 },
+    "process": { "type": "string" },
+    "thread": { "type": "string" },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_sha256", "collector_id", "collector_version"],
+      "properties": {
+        "artifact_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "collector_id": { "type": "string", "minLength": 1 },
+        "collector_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "validity": { "enum": ["VALID", "INVALID", "UNKNOWN"] },
+    "reason_codes": { "type": "array", "items": { "type": "string" } }
+  }
+}

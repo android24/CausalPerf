@@ -1,0 +1,65 @@
+schema_version: 1
+id: startup-main-thread-cpu-001
+version: 0.1.0
+title: Main-thread redundant lookup-table computation
+category: startup
+description: Reduce cold-start latency while preserving the complete lookup table and first-screen output.
+
+platform:
+  min_api: 34
+  max_api: 36
+  device_class: physical
+  abis: [arm64-v8a]
+
+target:
+  primary_metric: timeToInitialDisplayMs
+  startup_mode: COLD
+  practical_threshold:
+    relative_percent: 10
+    absolute_ms: 50
+    combination: maximum
+
+source:
+  revision: UNCOMMITTED
+  application_id: dev.causalperf.startup.cpu
+  build_variant: benchmark
+  launch_component: dev.causalperf.startup.cpu/.MainActivity
+
+commands:
+  build:
+    executable: gradle
+    args: [":app:assembleBenchmark"]
+    working_directory: .
+    timeout_seconds: 1200
+  correctness:
+    executable: gradle
+    args: [":app:connectedBenchmarkAndroidTest"]
+    working_directory: .
+    timeout_seconds: 1800
+  performance:
+    executable: gradle
+    args: [":macrobenchmark:connectedCheck"]
+    working_directory: .
+    timeout_seconds: 7200
+
+measurement:
+  design: a1_b_a2
+  stabilization_iterations: 3
+  measurement_iterations_per_arm: 30
+  compilation_mode: none
+  bootstrap_resamples: 10000
+  confidence_level: 0.95
+  max_invalid_sample_percent: 10
+  max_baseline_drift_percent: 10
+
+agent_access:
+  writable_paths: [app/src/main]
+  protected_paths: [app/src/androidTest, macrobenchmark, task.yaml]
+  network: denied
+
+budgets:
+  wall_time_seconds: 14400
+  max_experiments: 5
+  max_patch_files: 8
+  max_patch_lines: 500
+

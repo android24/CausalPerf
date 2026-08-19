@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/rollback-result.schema.json",
+  "title": "CausalPerf Rollback Result",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "id", "run_id", "intervention_id", "started_at", "completed_at", "strategy", "status", "expected_source_sha256", "observed_source_sha256", "workspace_verified", "device_verified", "reason_codes", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": 1}, "id": {"type": "string", "pattern": "^RR-[A-Z0-9-]+$"}, "run_id": {"type": "string", "minLength": 1}, "intervention_id": {"type": "string", "pattern": "^IP-[A-Z0-9-]+$"},
+    "started_at": {"type": "string", "format": "date-time"}, "completed_at": {"type": "string", "format": "date-time"}, "strategy": {"enum": ["reverse_patch", "restore_clean_copy"]},
+    "status": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]}, "expected_source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "observed_source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "workspace_verified": {"type": "boolean"}, "device_verified": {"type": "boolean"}, "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

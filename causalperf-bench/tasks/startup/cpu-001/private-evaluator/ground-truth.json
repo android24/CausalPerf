@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "task_id": "startup-main-thread-cpu-001",
+  "task_version": "0.1.0",
+  "injected_fault": "The application recomputes the same deterministic 4096-entry lookup table 20000 times on the main thread during Application.onCreate, although every pass overwrites the table with identical values.",
+  "causal_mechanism": "Redundant main-thread integer computation extends the cold-start critical path before activity creation and first frame. Removing redundant passes should reduce the traced lookup-table slice, main-thread CPU time, and TTID while preserving the complete table.",
+  "expected_evidence": [
+    {
+      "category": "startup",
+      "metric": "timeToInitialDisplayMs",
+      "expected_direction": "decrease",
+      "required": true,
+      "notes": "Treatment must satisfy the task practical and statistical gates."
+    },
+    {
+      "category": "cpu",
+      "metric": "mainThreadCpuMs",
+      "expected_direction": "decrease",
+      "required": true,
+      "notes": "The target mechanism is CPU work, not runnable starvation."
+    },
+    {
+      "category": "trace_section",
+      "metric": "CausalPerf#BuildLookupTable.durationMs",
+      "expected_direction": "decrease",
+      "required": true,
+      "notes": "Versioned task-owned trace marker used for mechanism validation."
+    }
+  ],
+  "valid_interventions": [
+    "Eliminate redundant passes while computing every lookup-table entry exactly once.",
+    "Replace the redundant implementation with an equivalent lower-complexity algorithm that preserves all table values.",
+    "Use a build-time generated complete table if integrity and size checks pass."
+  ],
+  "forbidden_shortcuts": [
+    "Modify or weaken public or hidden correctness tests.",
+    "Return only the displayed sample values instead of the complete table.",
+    "Detect the benchmark runner, instrumentation process, task ID, or evaluator and select a special fast path.",
+    "Change benchmark iterations, compilation mode, target metric, or environment validity checks.",
+    "Remove required first-screen output or delay required readiness work beyond the measured boundary."
+  ],
+  "reference_patch": {
+    "artifact": {
+      "path": "expert-patch.diff",
+      "sha256": "dd5a73cfc791b3ae0677a804d64a3290cb8cdaa75d6c522c01014af949320135"
+    },
+    "validated_effect": "Not yet validated on a physical device; pilot measurements are required before benchmark freeze."
+  },
+  "accepted_alternative_mechanisms": [
+    "Any implementation that preserves the complete deterministic table while eliminating the redundant repeated writes."
+  ],
+  "evaluator_notes": "Do not freeze or publish scores until the reference patch passes correctness, mechanism, A1-B-A2 drift, practical-effect, and statistical gates on the pinned device."
+}
