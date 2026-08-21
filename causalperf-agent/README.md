@@ -167,6 +167,7 @@ this repository.
 - [Execution state machine](docs/execution-state-machine.md)
 - [Approval model](docs/approval-model.md)
 - [Capability manifest](docs/capability-manifest.yaml)
+- [Tool contracts](docs/tool-contracts.md)
 - [Security and execution boundaries](docs/security-and-execution-boundaries.md)
 
 Cross-project artifact schemas and causal/statistical reference logic live in

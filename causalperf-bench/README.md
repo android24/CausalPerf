@@ -224,6 +224,7 @@ measurements, and trace corpus remain to be created.
 
 - [Leakage threat model](docs/leakage-threat-model.md)
 - [Benchmark schemas](schemas/README.md)
+- [Task reproduction schema](schemas/task-reproduction-package.schema.json)
 
 Cross-project runtime artifacts and causal/statistical semantics live in
 [`../shared`](../shared/README.md). Bench owns public/private task packaging,

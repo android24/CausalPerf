@@ -39,12 +39,14 @@ CausalPerf/
 │   └── reference/
 ├── causalperf-agent/
 │   ├── README.md
-│   └── docs/
+│   ├── docs/
 │       ├── approval-model.md
 │       ├── capability-manifest.yaml
 │       ├── execution-state-machine.md
 │       ├── module-interfaces.md
 │       └── security-and-execution-boundaries.md
+│   ├── schemas/             # Agent-only tool request/response contracts
+│   └── tests/
 └── causalperf-bench/
     ├── README.md
     ├── docs/leakage-threat-model.md
@@ -63,6 +65,9 @@ CausalPerf/
   because they define task authoring and scoring rather than Agent runtime.
 - Approval and ToolCall records remain shared artifacts because the evaluator
   audits them, while capability policy and tool implementations are Agent-owned.
+- Concrete tool request/response schemas are Agent-owned because they describe
+  execution adapters; the shared `ToolCall` record only preserves their audited
+  identity, policy decision and outcome.
 - Statistical and causal reference code remains shared. A production Android
   runner will be Agent-owned; a private score calculator will be Bench-owned.
 

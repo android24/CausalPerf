@@ -9,13 +9,13 @@ fresh data to qualify CPU-001; Phase 1D expands the corpus.
 
 | Problem | What is executable now | What still blocks closure | Status |
 |---|---|---|---|
-| Data representation | 19 Draft 2020-12 schemas; canonical SHA-256; tool/approval/build/rollback/result/partition contracts; cross-object invariants; migration policy | reproduction package and tool-specific argument/result schemas; first real migration fixture | PARTIAL |
+| Data representation | runtime schemas plus Bench reproduction and Agent tool contracts; canonical SHA-256; cross-object invariants; migration policy | first real migration fixture and final schema-bundle versioning | PARTIAL |
 | Experiment execution | pure evaluator runs validate → A1 → register → B → A2 → verify → decide with a hash chain | Android build/install/measure/trace runner, crash recovery, actual rollback | PARTIAL |
 | Causal validity | preregistration, environment identity, mechanism direction, reversal statistics, and replication are computed | intervention-to-source-factor verifier; clean-build replication; cross-device C2 | PARTIAL |
 | Statistical decision | deterministic median effect, bootstrap CI, practical threshold, drift and sample gates | invalid-sample ingestion, paired/randomized designs, secondary metrics, multiplicity and empirical threshold calibration | PARTIAL |
 | Agent scope | capability and approval manifests describe the boundary | typed tool I/O, runtime policy enforcement, budgets and sandbox adapter | PARTIAL |
 | Benchmark leakage | task validator plus clean read-only exporter, digest manifest, forbidden marker/canary scan | network/environment/process isolation; post-run output scan; evaluator principal separation | PARTIAL |
-| Five startup tasks | CPU task source probe and five task specifications | no task has a validated APK, trace set, A1/B/A2 pilot, variance report, or independent replay | BLOCKED ON ANDROID LAB |
+| Five startup tasks | five machine-readable reproduction manifests; CPU honestly `IMPLEMENTED`, four tasks `DRAFT` | no task has a validated APK, trace set, A1/B/A2 pilot, variance report, or independent replay | BLOCKED ON ANDROID LAB |
 
 ## P0 acceptance criteria
 
