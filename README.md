@@ -257,6 +257,7 @@ later without changing their public schemas.
 
 ## Detailed design
 
+- [Changelog](CHANGELOG.md)
 - [Architecture](docs/architecture.md)
 - [Glossary](docs/glossary.md)
 - [Repository ownership map](docs/repository-ownership.md)
@@ -268,6 +269,7 @@ later without changing their public schemas.
 - [Agent security and execution boundaries](causalperf-agent/docs/security-and-execution-boundaries.md)
 - [Benchmark leakage threat model](causalperf-bench/docs/leakage-threat-model.md)
 - [Benchmark evaluation isolation harness](causalperf-bench/docs/isolation-harness.md)
+- [Isolation backend conformance](docs/isolation-backend-conformance.md)
 - [Repository strategy](docs/repository-strategy.md)
 - [Runtime schemas](shared/schemas/)
 - [Deterministic statistical and causal reference](shared/reference/README.md)

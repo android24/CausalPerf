@@ -34,10 +34,12 @@ all unit suites pass, CPU-001 public/private packaging validates, and all five
 reproduction manifests report their real lifecycle without overstating missing
 evidence.
 
-Observed result for this audit: 193 repository files inspected, 37 Schemas
-validated, and 145 tests passed (57 shared-reference, 43 Bench, 41 Agent and 4
-repository-boundary tests). CPU-001 packaging and all five lifecycle manifests
-also passed their command-line validators.
+Observed result for this audit: 37 Schemas validated and 145 tests passed (57
+shared-reference, 43 Bench, 41 Agent and 4 repository-boundary tests).
+CPU-001 packaging and all five lifecycle manifests also passed their
+command-line validators. Repository file counts are intentionally not used as
+release evidence because ignored runtime caches can change that diagnostic
+number without changing tracked source.
 
 ## Exit-criterion evidence
 
@@ -60,8 +62,9 @@ QUALIFICATION partition.
 
 ## Known limitations and non-claims
 
-- The working tree is not yet a release commit; this audit is bound to the
-  contract bundle digest above, not to a published Git revision.
+- Release provenance is the annotated `causalperf-contracts@0.6.0` tag. The
+  tag binds this audit, CI configuration and contract bundle; moving or
+  recreating the tag invalidates the release audit.
 - CPU-001 has source, benchmark, correctness, Ground Truth and reference-patch
   skeletons, but no validated APK, device trace, calibration session, variance
   report or independent replay.
@@ -73,6 +76,9 @@ QUALIFICATION partition.
   requires Windows 11 24H2, the Windows Sandbox feature and `wsb.exe`.
 - Task-specific hidden scoring and semantic-shortcut detection remain Phase 1D
   evaluator work.
+
+The platform qualification checklist is maintained in
+[Isolation backend conformance](isolation-backend-conformance.md).
 
 ## Advancement boundary
 
