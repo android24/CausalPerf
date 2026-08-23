@@ -45,3 +45,32 @@ Each migration is a pure function `vN -> vN+1` with:
 Until a type has a second released version, its migration registry is empty and
 unknown versions fail closed. This is preferable to inventing unused migration
 code before a real compatibility change exists.
+
+## Bundle release
+
+`shared/schema-bundle.lock.json` is the released `causalperf-contracts@0.6.0`
+contract set. It enumerates every shared, Agent and Bench JSON Schema by path,
+`$id`, document version and raw-byte SHA-256, and seals that list with a
+canonical bundle digest. Adding, removing or editing any Schema requires an
+intentional bundle-version update.
+
+The executable registry in
+`shared/reference/causalperf_reference/schema_registry.py` verifies exact file
+membership and hashes. Its migration registry contains only released semantic
+transitions; most document types remain v1. Isolation Policy, Run and Report
+are v2 because the Windows backend adds drive-letter absolute paths and a new
+backend identity.
+Their v1 schemas are retained under `causalperf-bench/schemas/archive/`, and a
+pure contiguous migration changes only `schema_version` and reseals the record;
+their original raw-byte hashes remain locked as v1 entries alongside v2 under
+the same schema IDs. The registry therefore keys uniqueness by schema ID and
+document version. The migration information-loss list is empty. Tests prove
+same-version migration is a pure idempotent copy and that unknown future
+versions and downgrades fail closed.
+
+Task Reproduction Package is also v2. Its migration binds each legacy artifact
+to the conservative role implied by v1: task-definition material to
+`DEVELOPMENT`, experiment evidence to `CALIBRATION`, and replay/leakage review
+to `QUALIFICATION`. It does not invent fresh qualification measurements, so a
+migrated v1 package cannot satisfy `QUALIFIED` completeness unless distinct
+qualification artifacts are subsequently recorded.

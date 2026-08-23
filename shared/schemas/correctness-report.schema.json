@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/correctness-report.schema.json",
+  "title": "CausalPerf Raw Correctness Report",
+  "description": "Sealed runner output. It deliberately contains no caller-selected PASS/FAIL status.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "id", "run_id", "phase", "started_at", "completed_at",
+    "suite_id", "suite_sha256", "source_manifest_id", "command_request_sha256",
+    "exit_code", "test_count", "failure_count", "skipped_count",
+    "result_artifact_sha256", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^CR-[A-Z0-9-]+$"},
+    "run_id": {"type": "string", "minLength": 1},
+    "phase": {"enum": ["BASELINE", "TREATMENT"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_manifest_id": {"type": "string", "pattern": "^SM-[A-Z0-9-]+$"},
+    "command_request_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "exit_code": {"type": "integer"},
+    "test_count": {"type": "integer", "minimum": 0},
+    "failure_count": {"type": "integer", "minimum": 0},
+    "skipped_count": {"type": "integer", "minimum": 0},
+    "behavior_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "result_artifact_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

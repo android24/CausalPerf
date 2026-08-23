@@ -157,9 +157,16 @@ The first usable Agent milestone requires:
 
 ## Status
 
-Detailed design only. The deterministic evidence engine, device runner,
-experiment engine, and verification pipeline have not yet been implemented in
-this repository.
+The production Android evidence and device adapters are not implemented. The
+device-independent execution core is now executable: it includes a typed state
+machine, Adapter protocol, simulated A1/B/A2 flow, hash-chained intents and
+completions, persisted recovery snapshots, rollback behavior, fault injection,
+bounded transport retry, and a fail-closed Runtime Policy Engine. The policy
+layer enforces typed capabilities, exact approvals, command/path/device scope,
+immutable budgets, pre-mutation rollback obligations and ToolCall audit records
+outside the model. It is Phase 1A infrastructure, not a runnable Android
+optimization Agent; OS isolation remains WP6 and Android adapters remain Phase
+1B.
 
 ## Design documents
 
@@ -168,6 +175,7 @@ this repository.
 - [Approval model](docs/approval-model.md)
 - [Capability manifest](docs/capability-manifest.yaml)
 - [Tool contracts](docs/tool-contracts.md)
+- [Runtime Policy Engine](docs/runtime-policy-engine.md)
 - [Security and execution boundaries](docs/security-and-execution-boundaries.md)
 
 Cross-project artifact schemas and causal/statistical reference logic live in

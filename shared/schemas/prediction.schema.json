@@ -37,6 +37,19 @@
         }
       }
     },
+    "protected_secondary_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["metric", "unit", "regression_direction", "maximum_regression_percent"],
+        "properties": {
+          "metric": {"type": "string", "minLength": 1},
+          "unit": {"type": "string", "minLength": 1},
+          "regression_direction": {"enum": ["increase", "decrease"]},
+          "maximum_regression_percent": {"type": "number", "minimum": 0}
+        }
+      }
+    },
     "falsification_conditions": {
       "type": "array", "minItems": 1,
       "items": { "type": "string", "minLength": 5 }

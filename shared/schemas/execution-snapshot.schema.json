@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/execution-snapshot.schema.json",
+  "title": "CausalPerf Execution Snapshot",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "run_id", "state", "last_safe_state", "mutation_in_flight", "intervention_applied", "retry_counts", "artifact_digests", "reason_codes", "policy_sha256", "budget_usage", "rollback_obligations", "ledger_head_sha256", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": 1}, "run_id": {"type": "string", "minLength": 1},
+    "state": {"$ref": "#/$defs/state"}, "last_safe_state": {"$ref": "#/$defs/state"},
+    "pending_state": {"oneOf": [{"$ref": "#/$defs/state"}, {"type": "null"}]},
+    "mutation_in_flight": {"type": "boolean"}, "intervention_applied": {"type": "boolean"},
+    "retry_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 1}},
+    "artifact_digests": {"type": "array", "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "policy_sha256": {"oneOf": [{"type": "string", "pattern": "^[a-f0-9]{64}$"}, {"type": "null"}]},
+    "budget_usage": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "rollback_obligations": {"type": "array", "items": {"type": "string", "pattern": "^IP-[A-Z0-9-]+$"}, "uniqueItems": true},
+    "ledger_head_sha256": {"oneOf": [{"type": "string", "pattern": "^[a-f0-9]{64}$"}, {"type": "null"}]},
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {"state": {"enum": ["CREATED", "VALIDATING", "PREPARING_ENVIRONMENT", "BUILDING_BASELINE", "VERIFYING_BASELINE_CORRECTNESS", "MEASURING_A1", "DIAGNOSING", "REGISTERING", "APPLYING_INTERVENTION", "BUILDING_TREATMENT", "VERIFYING_TREATMENT_CORRECTNESS", "MEASURING_B", "RESTORING_BASELINE", "MEASURING_A2", "VERIFYING", "DECIDING", "CLEANING_UP", "ROLLING_BACK", "COMPLETED", "REJECTED", "INCONCLUSIVE", "FAILED", "ROLLBACK_REQUIRED"]}}
+}

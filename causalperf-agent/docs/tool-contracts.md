@@ -27,3 +27,9 @@ approval record before dispatch.
 - Patch requests bind the exact approval ID and baseline/patch digests.
 - A structurally valid request may still be denied by capability, budget,
   lifecycle, protected-path, environment or approval policy.
+
+The executable decision order, budget reservation, approval timing, rollback
+obligations and audit lifecycle are specified in the
+[Runtime Policy Engine](runtime-policy-engine.md). The runtime policy itself is
+sealed by `../schemas/runtime-policy.schema.json`; the cumulative budget and
+policy digest are persisted in the shared `ExecutionSnapshot`.

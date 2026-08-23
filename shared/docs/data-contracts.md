@@ -12,8 +12,10 @@ environment association, and preregistered exclusions.
 - Identifiers are stable strings scoped by artifact type.
 - Timestamps are UTC RFC 3339; Perfetto timestamps remain integer nanoseconds.
 - Durations use explicit unit suffixes such as `_ms` or `_ns`.
-- Every persisted artifact includes `schema_version`, producer version, and
-  SHA-256 content digest.
+- Every persisted document includes `schema_version` and is either sealed by a
+  SHA-256 content digest or referenced as a raw-byte artifact. Producer/tool
+  identity is embedded where defined and otherwise bound through its ToolCall,
+  Artifact and ledger event; it is never inferred from file location.
 - Unknown and unavailable are represented explicitly; missing values are never
   silently converted to zero.
 
@@ -22,10 +24,11 @@ Canonicalization, compatibility, and migration rules are normative in
 
 ## Executable artifact inventory
 
-Shared schemas cover environment, evidence, hypothesis, prediction,
-intervention, measurement sets, generic artifacts, build results, tool calls,
-approvals, gate results, rollback results, ledger events, experiment records,
-final experiment results, and the data-partition registry. Benchmark-specific
+Shared schemas cover environment and its validity policy, evidence, hypothesis,
+prediction, intervention, source/integrity manifests, raw correctness reports,
+measurement sets, generic artifacts, build results, tool calls, approvals, gate
+results, rollback results, ledger events, experiment records, final experiment
+results, and the data-partition registry. Benchmark-specific
 public task, private Ground Truth, and evaluation-result schemas remain under
 `causalperf-bench/schemas/`.
 
@@ -144,6 +147,10 @@ human-readable summary
 input and output artifact digests
 timestamp
 ```
+
+Gate results are evaluator outputs, never Agent inputs. Integrity, correctness,
+environment, isolation, mechanism, statistics and replication are computed as
+specified in [Computed causal gates](computed-causal-gates.md).
 
 ## ExperimentRecord and ledger
 

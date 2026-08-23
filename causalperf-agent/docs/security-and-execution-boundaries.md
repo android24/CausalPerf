@@ -61,3 +61,16 @@ On interruption or failed gates:
 5. restore or reinstall the declared baseline APK when needed;
 6. record recovery status and unresolved residue;
 7. return `ROLLBACK_REQUIRED` if restoration cannot be verified.
+
+## Phase 1A enforcement status
+
+`src/causalperf_agent/policy/` now enforces the semantic boundary before
+adapter dispatch. It rejects unknown tools, unsafe commands, path traversal,
+protected mutations, device/package/partition mismatch, stale or mismatched
+approvals, and budget exhaustion. Budget use and rollback obligations are
+checkpointed before side effects, and all requests produce ToolCall audit
+records.
+
+This does not replace process isolation. The execution adapter is part of the
+trusted Runner, and WP6 must still prove network denial, sanitized environments,
+separate Agent/evaluator views, process ownership and pre/post output scanning.

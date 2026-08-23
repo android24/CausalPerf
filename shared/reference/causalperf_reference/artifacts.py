@@ -37,7 +37,11 @@ def verify_content_digest(document: dict, field: str = "content_sha256") -> None
 
 def verify_experiment_bundle(bundle: dict) -> None:
     """Validate invariants JSON Schema cannot express across artifacts."""
-    required = ("prediction", "hypothesis", "intervention", "measurement_sets", "environments")
+    required = (
+        "prediction", "hypothesis", "intervention", "measurement_sets",
+        "environments", "environment_policy", "statistical_policy",
+        "integrity_inputs", "correctness_reports",
+    )
     missing = [name for name in required if name not in bundle]
     if missing:
         raise ContractError(f"bundle missing: {', '.join(missing)}")
@@ -45,8 +49,67 @@ def verify_experiment_bundle(bundle: dict) -> None:
     prediction = bundle["prediction"]
     hypothesis = bundle["hypothesis"]
     intervention = bundle["intervention"]
-    for document in (prediction, hypothesis, intervention, *bundle["measurement_sets"], *bundle["environments"]):
+    api_policy = bundle["environment_policy"]["api_level"]
+    if api_policy["minimum"] > api_policy["maximum"]:
+        raise ContractError("environment API policy range is inverted")
+    source_manifests = bundle["integrity_inputs"].get("source_manifests", [])
+    correctness_reports = bundle["correctness_reports"]
+    evidence = [item for items in bundle.get("evidence_by_arm", {}).values() for item in items]
+    verify_content_digest(bundle["integrity_inputs"])
+    if bundle["integrity_inputs"].get("run_id") != bundle["run_id"]:
+        raise ContractError("integrity input belongs to another run")
+    for document in (
+        prediction, hypothesis, intervention, bundle["statistical_policy"],
+        *bundle["measurement_sets"], *bundle["environments"], bundle["environment_policy"],
+        *source_manifests, *correctness_reports, *evidence,
+    ):
         verify_content_digest(document)
+
+    evidence_ids = [item["id"] for item in evidence]
+    if len(evidence_ids) != len(set(evidence_ids)):
+        raise ContractError("duplicate evidence ID")
+    unknown_evidence_arms = set(bundle.get("evidence_by_arm", {})) - {"A1", "B", "A2", "REPLICATION"}
+    if unknown_evidence_arms:
+        raise ContractError(f"unknown evidence arms: {sorted(unknown_evidence_arms)}")
+
+    manifest_roles: dict[str, dict] = {}
+    manifest_ids: set[str] = set()
+    for manifest in source_manifests:
+        role = manifest["role"]
+        if role in manifest_roles:
+            raise ContractError(f"duplicate source manifest role: {role}")
+        manifest_roles[role] = manifest
+        manifest_ids.add(manifest["id"])
+        if manifest["run_id"] != bundle["run_id"]:
+            raise ContractError("source manifest belongs to another run")
+        paths = [entry["path"] for entry in manifest["entries"]]
+        if len(paths) != len(set(paths)):
+            raise ContractError(f"duplicate source path in {role} manifest")
+        if paths != sorted(paths):
+            raise ContractError(f"source manifest entries are not canonical in {role}")
+        if manifest["tree_sha256"] != digest(manifest["entries"]):
+            raise ContractError(f"source tree digest mismatch in {role}")
+
+    report_phases: set[str] = set()
+    for report in correctness_reports:
+        phase = report["phase"]
+        if phase in report_phases:
+            raise ContractError(f"duplicate correctness report phase: {phase}")
+        report_phases.add(phase)
+        if report["run_id"] != bundle["run_id"]:
+            raise ContractError("correctness report belongs to another run")
+        if report["source_manifest_id"] not in manifest_ids:
+            raise ContractError("correctness report references an unknown source manifest")
+        if report["failure_count"] + report["skipped_count"] > report["test_count"]:
+            raise ContractError("correctness result counts are inconsistent")
+        if parse_time(report["started_at"]) > parse_time(report["completed_at"]):
+            raise ContractError("correctness report completes before it starts")
+
+    expected_report_sources = {"BASELINE": "BASELINE", "TREATMENT": "TREATMENT"}
+    for report in correctness_reports:
+        expected = manifest_roles.get(expected_report_sources[report["phase"]])
+        if expected and report["source_manifest_id"] != expected["id"]:
+            raise ContractError("correctness report is bound to the wrong source role")
 
     if prediction["hypothesis_id"] != hypothesis["id"]:
         raise ContractError("prediction does not reference bundle hypothesis")
@@ -55,21 +118,32 @@ def verify_experiment_bundle(bundle: dict) -> None:
     if intervention["hypothesis_id"] != hypothesis["id"] or intervention["prediction_id"] != prediction["id"]:
         raise ContractError("intervention references the wrong hypothesis or prediction")
 
-    arms = {item["arm"]: item for item in bundle["measurement_sets"]}
-    if not {"A1", "B", "A2"}.issubset(arms):
-        raise ContractError("A1, B, and A2 measurement sets are required")
-    if len(arms) != len(bundle["measurement_sets"]):
-        raise ContractError("duplicate measurement arm")
+    statistical_policy = bundle["statistical_policy"]
+    if statistical_policy["prediction_id"] != prediction["id"]:
+        raise ContractError("statistical policy references the wrong prediction")
+    if statistical_policy["design"] != "a1_b_a2":
+        raise ContractError("unsupported preregistered statistical design")
+
+    sets = {(item["metric"], item["arm"]): item for item in bundle["measurement_sets"]}
+    if len(sets) != len(bundle["measurement_sets"]):
+        raise ContractError("duplicate metric and measurement arm")
+    primary_arms = {arm: sets.get((prediction["primary_metric"], arm)) for arm in ("A1", "B", "A2")}
+    if any(item is None for item in primary_arms.values()):
+        raise ContractError("primary metric A1, B, and A2 measurement sets are required")
     partitions = {item["partition"] for item in bundle["measurement_sets"]}
     if len(partitions) != 1:
         raise ContractError("measurement partitions cannot be mixed")
     if bundle.get("partition") and partitions != {bundle["partition"]}:
         raise ContractError("bundle and measurement partition mismatch")
-    first_b = min(parse_time(item["measured_at"]) for item in arms["B"]["measurements"])
+    first_b = min(parse_time(item["measured_at"]) for item in primary_arms["B"]["measurements"])
     if parse_time(prediction["registered_at"]) >= first_b:
         raise ContractError("prediction was not preregistered before treatment")
+    if parse_time(statistical_policy["registered_at"]) >= first_b:
+        raise ContractError("statistical policy was not preregistered before treatment")
 
     environment_ids = {item["id"] for item in bundle["environments"]}
+    measurement_ids: set[str] = set()
+    metric_units: dict[str, str] = {}
     for measurement_set in bundle["measurement_sets"]:
         if measurement_set["run_id"] != bundle["run_id"]:
             raise ContractError("measurement set belongs to another run")
@@ -77,17 +151,32 @@ def verify_experiment_bundle(bundle: dict) -> None:
         if len(sequences) != len(set(sequences)):
             raise ContractError(f"duplicate sequence in {measurement_set['arm']}")
         policy = measurement_set["policy"]
-        included = [item for item in measurement_set["measurements"] if item["included"]]
         excluded = [item for item in measurement_set["measurements"] if not item["included"]]
-        if len(included) < policy["minimum_included"]:
-            raise ContractError(f"insufficient included measurements in {measurement_set['arm']}")
-        if 100 * len(excluded) / len(measurement_set["measurements"]) > policy["max_invalid_percent"]:
-            raise ContractError(f"too many excluded measurements in {measurement_set['arm']}")
+        if policy["minimum_included"] != statistical_policy["minimum_included_per_arm"]:
+            raise ContractError("measurement minimum does not match statistical policy")
+        if policy["max_invalid_percent"] != statistical_policy["max_invalid_percent"]:
+            raise ContractError("measurement invalid limit does not match statistical policy")
         allowed = set(policy["predeclared_exclusion_codes"])
         if any(item.get("exclusion_reason") not in allowed for item in excluded):
             raise ContractError(f"unregistered exclusion reason in {measurement_set['arm']}")
         if any(item["environment_snapshot_id"] not in environment_ids for item in measurement_set["measurements"]):
             raise ContractError(f"unknown environment snapshot in {measurement_set['arm']}")
+
+        unit = metric_units.setdefault(measurement_set["metric"], measurement_set["unit"])
+        if unit != measurement_set["unit"]:
+            raise ContractError(f"metric unit changed: {measurement_set['metric']}")
+        for measurement in measurement_set["measurements"]:
+            if measurement["id"] in measurement_ids:
+                raise ContractError(f"duplicate measurement ID: {measurement['id']}")
+            measurement_ids.add(measurement["id"])
+
+        expected_role = {"A1": "BASELINE", "B": "TREATMENT", "A2": "RESTORED"}.get(measurement_set["arm"])
+        expected_manifest = manifest_roles.get(expected_role)
+        if expected_manifest and any(
+            item["source_sha256"] != expected_manifest["tree_sha256"]
+            for item in measurement_set["measurements"]
+        ):
+            raise ContractError(f"measurement source does not match {expected_role} manifest")
 
     if intervention.get("additional_factors") and not intervention.get("multi_factor_justification"):
         raise ContractError("multi-factor intervention lacks justification")
@@ -112,12 +201,16 @@ def verify_tool_approval(tool_call: dict, approvals: list[dict]) -> None:
     decision = tool_call["policy_decision"]
     if decision["status"] == "DENY" and tool_call["status"] not in {"DENIED", "REQUESTED"}:
         raise ContractError("denied tool call was executed")
-    if decision["status"] != "REQUIRE_APPROVAL":
+    if decision["status"] == "REQUIRE_APPROVAL":
+        if tool_call["status"] != "APPROVAL_PENDING":
+            raise ContractError("approval-pending tool call was executed")
+        return
+    if decision["status"] == "DENY" or tool_call["risk"] not in {"R2", "R3", "R4"}:
         return
     approval_id = decision.get("approval_id")
     approval = approval_by_id.get(approval_id)
     if approval is None:
-        raise ContractError("required approval record is missing")
+        raise ContractError("approved high-risk tool call lacks its approval record")
     verify_content_digest(approval)
     if approval["run_id"] != tool_call["run_id"] or approval["risk"] != tool_call["risk"]:
         raise ContractError("approval run or risk does not match tool call")

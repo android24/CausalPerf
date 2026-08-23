@@ -4,7 +4,7 @@
   "title": "CausalPerf Evidence",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "id", "category", "metric", "value", "unit", "source"],
+  "required": ["schema_version", "id", "category", "metric", "value", "unit", "source", "content_sha256"],
   "properties": {
     "schema_version": { "const": 1 },
     "id": { "type": "string", "pattern": "^EV-[A-Z0-9-]+$" },
@@ -26,6 +26,7 @@
       }
     },
     "validity": { "enum": ["VALID", "INVALID", "UNKNOWN"] },
-    "reason_codes": { "type": "array", "items": { "type": "string" } }
+    "reason_codes": { "type": "array", "items": { "type": "string" } },
+    "content_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
   }
 }

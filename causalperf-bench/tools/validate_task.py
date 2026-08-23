@@ -59,7 +59,7 @@ def assert_access_boundaries(task: dict[str, Any]) -> None:
 def assert_public_package(public_dir: Path) -> None:
     forbidden_names = {
         ".git", "private-evaluator", "ground-truth.json", "expert-patch.diff",
-        "evaluator-policy.json", "hidden-tests",
+        "evaluator-policy.json", "evaluation-canaries.json", "hidden-tests",
     }
     leaked = [path for path in public_dir.rglob("*") if path.name in forbidden_names]
     if leaked:
@@ -86,6 +86,19 @@ def validate_private(private_dir: Path, public_task: dict[str, Any]) -> None:
         raise ValueError("Public task and private Ground Truth task IDs differ")
     if ground_truth["task_version"] != public_task["version"]:
         raise ValueError("Public task and private Ground Truth versions differ")
+    canaries = load_json(private_dir / "evaluation-canaries.json")
+    validate(canaries, "private-canary-set.schema.json")
+    if canaries["task_id"] != public_task["id"] or canaries["task_version"] != public_task["version"]:
+        raise ValueError("Public task and private canary identities differ")
+    expected_canary_digest = canaries["content_sha256"]
+    canonical = {
+        key: value for key, value in canaries.items() if key != "content_sha256"
+    }
+    actual_canary_digest = hashlib.sha256(
+        json.dumps(canonical, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    if expected_canary_digest != actual_canary_digest:
+        raise ValueError("Private canary set digest mismatch")
     artifact = ground_truth["reference_patch"]["artifact"]
     patch_path = private_dir / normalize_relative(artifact["path"])
     actual = sha256(patch_path)

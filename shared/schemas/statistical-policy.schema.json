@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/statistical-policy.schema.json",
+  "title": "CausalPerf Preregistered Statistical Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "id", "policy_version", "prediction_id", "registered_at",
+    "design", "minimum_included_per_arm", "max_invalid_percent",
+    "max_baseline_drift_percent", "bootstrap_resamples", "confidence_level",
+    "seed", "multiplicity", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^SP-[A-Z0-9-]+$"},
+    "policy_version": {"type": "string", "minLength": 1},
+    "prediction_id": {"type": "string", "pattern": "^PR-[A-Z0-9-]+$"},
+    "registered_at": {"type": "string", "format": "date-time"},
+    "design": {"const": "a1_b_a2"},
+    "minimum_included_per_arm": {"type": "integer", "minimum": 10},
+    "max_invalid_percent": {"type": "number", "minimum": 0, "maximum": 25},
+    "max_baseline_drift_percent": {"type": "number", "minimum": 0, "maximum": 50},
+    "bootstrap_resamples": {"type": "integer", "minimum": 1000, "maximum": 1000000},
+    "confidence_level": {"type": "number", "exclusiveMinimum": 0.8, "exclusiveMaximum": 1},
+    "seed": {"type": "integer", "minimum": 0},
+    "multiplicity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["method", "family"],
+      "properties": {
+        "method": {"const": "bonferroni"},
+        "family": {"const": "protected_secondary_metrics"}
+      }
+    },
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

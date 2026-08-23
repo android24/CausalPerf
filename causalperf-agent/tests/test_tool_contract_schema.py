@@ -20,7 +20,7 @@ class ToolContractSchemaTest(unittest.TestCase):
             jsonschema.validate(value, SCHEMA)
 
     def test_apply_patch_requires_approval(self):
-        value = {"schema_version": 1, "tool_id": "apply_patch", "request": {"intervention_id": "IP-ONE", "patch_artifact_id": "AR-PATCH", "patch_sha256": SHA, "baseline_source_sha256": SHA, "allowed_paths": ["app/src"]}}
+        value = {"schema_version": 1, "tool_id": "apply_patch", "request": {"intervention_id": "IP-ONE", "patch_artifact_id": "AR-PATCH", "patch_sha256": SHA, "baseline_source_sha256": SHA, "allowed_paths": ["app/src"], "changed_paths": ["app/src/Main.kt"], "changed_line_count": 1}}
         with self.assertRaises(jsonschema.ValidationError):
             jsonschema.validate(value, SCHEMA)
 

@@ -19,7 +19,7 @@ REQUIRED_PATHS = (
 )
 PRIVATE_NAMES = {
     "ground-truth.json", "expert-patch.diff", "hidden-tests",
-    "private-evaluator", "evaluator-policy.json",
+    "private-evaluator", "evaluator-policy.json", "evaluation-canaries.json",
 }
 IGNORED_LINK_PREFIXES = ("http://", "https://", "mailto:", "chatgpt-", "#")
 MARKDOWN_LINK = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
@@ -116,7 +116,7 @@ def validate_json_schemas(root: Path) -> int:
     except ImportError as error:
         raise RepositoryError("jsonschema dependency is required") from error
     schemas = sorted((root / "shared" / "schemas").glob("*.json"))
-    schemas += sorted((root / "causalperf-bench" / "schemas").glob("*.json"))
+    schemas += sorted((root / "causalperf-bench" / "schemas").glob("**/*.json"))
     schemas += sorted((root / "causalperf-agent" / "schemas").glob("**/*.schema.json"))
     for path in schemas:
         value = json.loads(path.read_text(encoding="utf-8"))

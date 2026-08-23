@@ -267,6 +267,7 @@ later without changing their public schemas.
 - [Measurement policy](shared/docs/measurement-policy.md)
 - [Agent security and execution boundaries](causalperf-agent/docs/security-and-execution-boundaries.md)
 - [Benchmark leakage threat model](causalperf-bench/docs/leakage-threat-model.md)
+- [Benchmark evaluation isolation harness](causalperf-bench/docs/isolation-harness.md)
 - [Repository strategy](docs/repository-strategy.md)
 - [Runtime schemas](shared/schemas/)
 - [Deterministic statistical and causal reference](shared/reference/README.md)
@@ -274,7 +275,9 @@ later without changing their public schemas.
 - [Agent module interfaces](causalperf-agent/docs/module-interfaces.md)
 - [Agent execution state machine](causalperf-agent/docs/execution-state-machine.md)
 - [Agent approval model](causalperf-agent/docs/approval-model.md)
+- [Agent Runtime Policy Engine](causalperf-agent/docs/runtime-policy-engine.md)
 - [Phase 1A work packages](docs/phase-1a-experimental-contract-closure.md)
+- [Phase 1A exit audit](docs/phase-1a-exit-audit.md)
 
 ## Status
 
@@ -285,12 +288,12 @@ production evaluator is present yet.
 
 ```text
 D0 Concept and scope                 COMPLETE
-D1 Executable data contracts         IN PROGRESS (19 schemas + invariants)
-D2 Experiment execution protocol     IN PROGRESS (pure reference evaluator)
-D3 Causal decision engine            IN PROGRESS (computed core gates)
-D4 Statistical verifier              IN PROGRESS (synthetic A1/B/A2)
-D5 Agent capability contracts        IN PROGRESS
-D6 Leakage threat model/auditor       IN PROGRESS (validator + clean exporter)
+D1 Executable data contracts         PHASE 1A COMPLETE (33 locked schemas)
+D2 Experiment execution protocol     PHASE 1A COMPLETE (simulated recovery)
+D3 Causal decision engine            PHASE 1A COMPLETE (computed C1 gates)
+D4 Statistical verifier              PHASE 1A COMPLETE (A1/B/A2 + vetoes)
+D5 Agent capability contracts        PHASE 1A COMPLETE (policy + audit)
+D6 Leakage isolation and auditor      PHASE 1A COMPLETE (split views + scans)
 D7 Reproducible Android task corpus   NOT STARTED
 ```
 
@@ -303,7 +306,7 @@ device-independent loop validates:
 
 ```text
 Task -> Evidence -> Registered prediction -> A1/B/A2 measurements
-     -> Integrity/correctness/environment gates
+     -> Computed integrity/correctness/environment/isolation gates
      -> Statistical verdict -> Causal decision -> Ledger
 ```
 

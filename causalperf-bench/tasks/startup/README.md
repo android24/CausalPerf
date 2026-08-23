@@ -31,3 +31,20 @@ valid even while a task is a draft, but it must report missing artifacts and
 their reasons honestly. `validate_reproduction.py` raises the required evidence
 bar as lifecycle advances from `DRAFT` to `IMPLEMENTED`, `CALIBRATED`,
 `QUALIFIED`, and `FROZEN`; a filename or lifecycle claim alone is insufficient.
+
+Reproduction v2 identifies artifacts by `(partition, kind)`, not by `kind`
+alone. Calibration and qualification must therefore contain distinct
+environment, A1/B/A2, trace, mechanism and variance artifacts. Their digests
+must appear only in the matching partition registry; sealed partitions require
+both session identities and artifact identities. Check a claimed or future
+readiness level explicitly with:
+
+```bash
+python3 causalperf-bench/tools/validate_reproduction.py \
+  causalperf-bench/tasks/startup/cpu-001 \
+  --require-lifecycle CALIBRATED
+```
+
+The command currently fails by design because CPU-001 has no Android
+calibration evidence. Its failure proves honest incompleteness rather than a
+broken package.

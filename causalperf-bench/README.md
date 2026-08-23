@@ -214,15 +214,20 @@ tasks do not enter implementation merely because CPU-001 calibration runs.
 
 ## Status
 
-Detailed design. Public/private schemas and five task specifications are
-present. `startup-main-thread-cpu-001` has its first Android/Macrobenchmark
-implementation and machine validator, but has not been built or piloted on a
-device. The other applications, executable private evaluator, pilot
-measurements, and trace corpus remain to be created.
+Phase 1A benchmark packaging and isolation contracts are executable. The clean
+exporter, private canary set, sealed isolation run/report, Linux/macOS/Windows
+fail-closed backends, pre/post leakage scanner and split Agent/evaluator views
+have adversarial tests. Windows evaluation requires Windows 11 24H2, the
+Windows Sandbox feature and `wsb.exe`; older Windows hosts fail closed rather
+than using an unisolated subprocess. `startup-main-thread-cpu-001` has its first
+Android/Macrobenchmark implementation and machine validator, but has not been
+built or piloted on a device. The other applications, task-specific executable
+private evaluator, pilot measurements, and trace corpus remain to be created.
 
 ## Design documents
 
 - [Leakage threat model](docs/leakage-threat-model.md)
+- [Evaluation isolation harness](docs/isolation-harness.md)
 - [Benchmark schemas](schemas/README.md)
 - [Task reproduction schema](schemas/task-reproduction-package.schema.json)
 

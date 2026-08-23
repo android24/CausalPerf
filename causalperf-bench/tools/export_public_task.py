@@ -70,6 +70,18 @@ def export(source: Path, destination: Path) -> dict:
         manifest_path = stage / "public-manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         manifest_path.chmod(stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+        for root, directories, _ in os.walk(stage, topdown=False):
+            for name in directories:
+                (Path(root) / name).chmod(
+                    stat.S_IRUSR | stat.S_IXUSR |
+                    stat.S_IRGRP | stat.S_IXGRP |
+                    stat.S_IROTH | stat.S_IXOTH
+                )
+        stage.chmod(
+            stat.S_IRUSR | stat.S_IXUSR |
+            stat.S_IRGRP | stat.S_IXGRP |
+            stat.S_IROTH | stat.S_IXOTH
+        )
         stage.rename(destination)
         return manifest
     except BaseException:

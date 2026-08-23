@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/bench/schemas/isolation-policy.schema.json",
+  "title": "CausalPerf Evaluation Isolation Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "run_id", "backend", "network", "allowed_executables", "runtime_read_paths", "host_denied_read_paths", "agent_environment_keys", "evaluator_environment_keys", "writable_paths", "protected_paths", "limits", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^ISO-[A-Z0-9-]+$"},
+    "run_id": {"type": "string", "minLength": 1},
+    "backend": {"enum": ["AUTO", "DARWIN_SANDBOX", "LINUX_BWRAP"]},
+    "network": {"const": "denied"},
+    "allowed_executables": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^/"}},
+    "runtime_read_paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^/"}},
+    "host_denied_read_paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^/"}},
+    "agent_environment_keys": {"$ref": "#/$defs/environmentKeys"},
+    "evaluator_environment_keys": {"$ref": "#/$defs/environmentKeys"},
+    "writable_paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/relativePath"}},
+    "protected_paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/relativePath"}},
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["wall_time_seconds", "output_bytes", "scan_files", "scan_bytes"],
+      "properties": {
+        "wall_time_seconds": {"type": "integer", "minimum": 1, "maximum": 86400},
+        "output_bytes": {"type": "integer", "minimum": 1024, "maximum": 1000000000},
+        "scan_files": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "scan_bytes": {"type": "integer", "minimum": 1024, "maximum": 10000000000}
+      }
+    },
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "environmentKeys": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}},
+    "relativePath": {"type": "string", "pattern": "^(?:\\.|(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+)$"}
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "CS-CPU-001",
+  "task_id": "startup-main-thread-cpu-001",
+  "task_version": "0.1.0",
+  "generated_at": "2026-08-22T00:00:00Z",
+  "canaries": [
+    {
+      "id": "CANARY-INPUT-CPU-001",
+      "value": "CAUSALPERF_PRIVATE_CANARY_CPU001_INPUT_7N4K2Q9X"
+    },
+    {
+      "id": "CANARY-OUTPUT-CPU-001",
+      "value": "CAUSALPERF_PRIVATE_CANARY_CPU001_OUTPUT_5M8R3V6Z"
+    }
+  ],
+  "content_sha256": "6e8d46765aa700599012b62e75fdcdb74f0aca193eb2f1e41439025c5246ff86"
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/schemas/environment-policy.schema.json",
+  "title": "CausalPerf Environment Validity Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "id", "policy_version", "api_level", "allowed_abis",
+    "min_battery_percent", "charging", "allowed_thermal_statuses",
+    "expected_online_cpu_count", "min_available_memory_mb",
+    "max_background_load_percent", "compilation_mode", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^EP-[A-Z0-9-]+$"},
+    "policy_version": {"type": "string", "minLength": 1},
+    "api_level": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "maximum"],
+      "properties": {
+        "minimum": {"type": "integer", "minimum": 29},
+        "maximum": {"type": "integer", "minimum": 29}
+      }
+    },
+    "allowed_abis": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["arm64-v8a", "x86_64"]}
+    },
+    "min_battery_percent": {"type": "number", "minimum": 0, "maximum": 100},
+    "charging": {"enum": ["ANY", "REQUIRED", "FORBIDDEN"]},
+    "allowed_thermal_statuses": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["NONE", "LIGHT", "MODERATE", "SEVERE", "CRITICAL", "EMERGENCY", "SHUTDOWN"]}
+    },
+    "expected_online_cpu_count": {"type": "integer", "minimum": 1},
+    "min_available_memory_mb": {"type": "number", "minimum": 0},
+    "max_background_load_percent": {"type": "number", "minimum": 0, "maximum": 100},
+    "compilation_mode": {"enum": ["none", "partial", "full", "speed-profile"]},
+    "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

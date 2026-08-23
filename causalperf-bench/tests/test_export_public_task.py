@@ -1,4 +1,5 @@
 import sys
+import stat
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,6 +16,7 @@ class PublicExporterTest(unittest.TestCase):
             manifest = export(source, destination)
             self.assertEqual([item["path"] for item in manifest["files"]], ["task.yaml"])
             self.assertTrue((destination / "public-manifest.json").is_file())
+            self.assertEqual(destination.stat().st_mode & stat.S_IWUSR, 0)
 
     def test_rejects_git_objects(self):
         with tempfile.TemporaryDirectory() as root:

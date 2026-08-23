@@ -28,6 +28,13 @@ plan/diff digest
 
 Changing the plan or diff invalidates the approval.
 
+At runtime, an R2+ request must include an approval ID. If the ID is known but
+no decision has yet been recorded, the request becomes `APPROVAL_PENDING` and
+is not dispatched. An absent ID, invalid/tampered record, mismatched request
+digest, wrong run/risk, denial, expiration, or approval recorded after the
+Runner's authorization time is a hard denial. Authorization time comes from a
+Runner-owned clock, not the Agent request.
+
 ## Human review package
 
 Before R2 approval, present:
@@ -46,3 +53,6 @@ User approval authorizes an action but does not convert failed integrity,
 correctness, environment, or statistical checks into PASS. External publication
 always remains a separate decision after experiment completion.
 
+The executable semantics are defined in the
+[Runtime Policy Engine](runtime-policy-engine.md). Approval records authorize an
+exact request; they do not grant a reusable risk-class capability.

@@ -7,7 +7,8 @@ cd "$repo_root"
 python3.12 tools/validate_repository.py
 PYTHONPATH=shared/reference python3.12 -m unittest discover -s shared/reference/tests -v
 python3.12 -m unittest discover -s causalperf-bench/tests -v
-python3.12 -m unittest discover -s causalperf-agent/tests -v
+PYTHONPATH=causalperf-agent/src:shared/reference \
+  python3.12 -m unittest discover -s causalperf-agent/tests -v
 python3.12 -m unittest discover -s tests -v
 python3.12 causalperf-bench/tools/validate_task.py \
   causalperf-bench/tasks/startup/cpu-001/public-task \

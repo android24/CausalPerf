@@ -49,6 +49,15 @@ identify a region but must not encode the hidden causal label.
 unsafe relative paths, writable/protected overlap, and symlinks escaping the
 public package. `export_public_task.py` creates a fresh read-only public tree,
 rejects every symlink, scans private markers/canaries, and emits a file/digest
-manifest. Separate OS principals/containers, environment allowlisting, network
-enforcement, evaluator-process isolation, and post-run canary scans remain
-unimplemented.
+manifest.
+
+WP6 adds a fail-closed [evaluation isolation harness](isolation-harness.md).
+Linux Bubblewrap, macOS sandbox-exec and Windows Sandbox backends enforce
+separate Agent and evaluator views, network denial,
+executable/runtime/environment allowlists, write boundaries, owned process or
+VM lifecycles, time/output limits and bounded public reports. Windows uses
+read-only host inputs, VM-local workspace staging and exact writable-subtree
+copyback so a broad writable mapped folder is never exposed. Seeded canaries
+are scanned before execution and across the resulting workspace, output, logs
+and evaluator publication. Unsupported hosts return `UNSUPPORTED`;
+bare-process fallback is prohibited.

@@ -1,21 +1,23 @@
 from __future__ import annotations
 
-from dataclasses import asdict
 from datetime import datetime, timezone
 
 from .artifacts import digest, verify_experiment_bundle
 from .decision import decide
-from .gates import verify_environment, verify_mechanism, verify_replication
+from .gates import (
+    verify_correctness,
+    verify_environment,
+    verify_integrity,
+    verify_intervention_isolation,
+    verify_mechanism,
+    verify_replication,
+)
 from .ledger import Ledger
-from .statistics import verify_a1_b_a2
+from .statistics import verify_experiment_statistics
 
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-
-
-def _included(measurement_set: dict) -> list[float]:
-    return [item["value"] for item in measurement_set["measurements"] if item["included"]]
 
 
 def evaluate_bundle(bundle: dict) -> dict:
@@ -23,41 +25,55 @@ def evaluate_bundle(bundle: dict) -> dict:
     verify_experiment_bundle(bundle)
     ledger = Ledger(bundle["run_id"])
 
-    def record(phase: str, kind: str, inputs: list[str] = [], outputs: list[str] = []):
+    def record(phase: str, kind: str, inputs: list[str] | None = None, outputs: list[str] | None = None):
         ledger.append({"occurred_at": _now(), "actor": "RUNNER", "phase": phase, "kind": kind,
-                       "inputs": inputs, "outputs": outputs, "exit_status": 0})
+                       "inputs": inputs or [], "outputs": outputs or [], "exit_status": 0})
 
     record("VALIDATE", "COMPLETION")
-    arms = {item["arm"]: item for item in bundle["measurement_sets"]}
+    primary_metric = bundle["prediction"]["primary_metric"]
+    arms = {item["arm"]: item for item in bundle["measurement_sets"] if item["metric"] == primary_metric}
     record("MEASURE_A1", "COMPLETION", outputs=[arms["A1"]["content_sha256"]])
     record("REGISTER", "COMPLETION", outputs=[bundle["prediction"]["content_sha256"]])
     record("MEASURE_B", "COMPLETION", outputs=[arms["B"]["content_sha256"]])
     record("MEASURE_A2", "COMPLETION", outputs=[arms["A2"]["content_sha256"]])
 
     policy = bundle["statistical_policy"]
-    statistical = verify_a1_b_a2(
-        _included(arms["A1"]), _included(arms["B"]), _included(arms["A2"]),
-        absolute_threshold_ms=policy["absolute_threshold_ms"],
-        relative_threshold_percent=policy["relative_threshold_percent"],
-        max_baseline_drift_percent=policy["max_baseline_drift_percent"],
-        bootstrap_resamples=policy.get("bootstrap_resamples", 10_000), seed=policy.get("seed", 0))
-    environment = verify_environment(bundle["environments"])
+    statistical = verify_experiment_statistics(bundle["measurement_sets"], bundle["prediction"], policy)
+    environment = verify_environment(bundle["environments"], bundle["environment_policy"])
+    integrity = verify_integrity(bundle["intervention"], bundle["integrity_inputs"])
+    correctness = verify_correctness(bundle["correctness_reports"])
+    isolation = verify_intervention_isolation(bundle["intervention"])
     mechanism = verify_mechanism(bundle["prediction"], bundle["evidence_by_arm"])
-    replication = verify_replication(statistical.absolute_effect_ms, bundle.get("replication_effects_ms", []),
+    primary_effect = statistical["primary"]["absolute_effect_ms"] if statistical["primary"] else 0
+    replication = verify_replication(primary_effect, bundle.get("replication_effects_ms", []),
                                      tolerance_percent=policy.get("replication_tolerance_percent", 20))
-    integrity = bundle["integrity_gate"]
-    correctness = bundle["correctness_gate"]
     first_b = min(item["measured_at"] for item in arms["B"]["measurements"])
     decision = decide(prediction_registered_at=bundle["prediction"]["registered_at"], first_treatment_at=first_b,
-                      integrity=integrity["status"], correctness=correctness["status"],
+                      integrity=integrity.status, correctness=correctness.status,
                       environment=environment.status, mechanism=mechanism.status,
-                      statistics=statistical.status, replication=replication.status)
-    record("VERIFY", "COMPLETION")
+                      statistics=statistical["status"], replication=replication.status,
+                      isolation=isolation.status)
+    computed_gates = {
+        "integrity": integrity.to_dict(), "correctness": correctness.to_dict(),
+        "isolation": isolation.to_dict(), "environment": environment.to_dict(),
+        "mechanism": mechanism.to_dict(), "replication": replication.to_dict(),
+    }
+    record(
+        "VERIFY", "COMPLETION",
+        inputs=[
+            bundle["integrity_inputs"]["content_sha256"],
+            *(item["content_sha256"] for item in bundle["correctness_reports"]),
+            *(item["content_sha256"] for item in bundle["environments"]),
+            bundle["environment_policy"]["content_sha256"],
+            bundle["statistical_policy"]["content_sha256"],
+            bundle["prediction"]["content_sha256"],
+            *(item["content_sha256"] for items in bundle["evidence_by_arm"].values() for item in items),
+        ],
+        outputs=[digest(computed_gates), digest(statistical)],
+    )
     result = {
-        "run_id": bundle["run_id"], "statistics": statistical.to_dict(),
-        "gates": {"integrity": integrity, "correctness": correctness,
-                  "environment": environment.to_dict(), "mechanism": mechanism.to_dict(),
-                  "replication": replication.to_dict()}, "decision": decision.to_dict()
+        "run_id": bundle["run_id"], "statistics": statistical,
+        "gates": computed_gates, "decision": decision.to_dict()
     }
     record("DECIDE", "DECISION", outputs=[digest(result)])
     result["ledger"] = ledger.events

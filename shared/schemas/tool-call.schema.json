@@ -7,7 +7,7 @@
   "properties": {
     "schema_version": {"const": 1}, "id": {"type": "string", "pattern": "^TC-[A-Z0-9-]+$"}, "run_id": {"type": "string", "minLength": 1},
     "requested_at": {"type": "string", "format": "date-time"}, "started_at": {"type": "string", "format": "date-time"}, "completed_at": {"type": "string", "format": "date-time"},
-    "tool_id": {"type": "string", "minLength": 1}, "risk": {"enum": ["R0", "R1", "R2", "R3", "R4"]},
+    "tool_id": {"type": "string", "minLength": 1}, "risk": {"enum": ["R0", "R1", "R2", "R3", "R4", "UNKNOWN"]},
     "request_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "arguments": {"type": "object"},
     "policy_decision": {"type": "object", "additionalProperties": false, "required": ["status", "reason_codes"], "properties": {"status": {"enum": ["ALLOW", "DENY", "REQUIRE_APPROVAL"]}, "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "approval_id": {"type": "string", "pattern": "^AP-[A-Z0-9-]+$"}}},
     "status": {"enum": ["REQUESTED", "DENIED", "APPROVAL_PENDING", "RUNNING", "SUCCEEDED", "FAILED", "TIMED_OUT"]},
@@ -15,7 +15,10 @@
     "exit_code": {"type": "integer"}, "failure_code": {"type": "string"}
   },
   "allOf": [
-    {"if": {"properties": {"policy_decision": {"properties": {"status": {"const": "REQUIRE_APPROVAL"}}}}}, "then": {"properties": {"policy_decision": {"required": ["approval_id"]}}}},
+    {"if": {"properties": {"policy_decision": {"properties": {"status": {"const": "REQUIRE_APPROVAL"}}}}}, "then": {"properties": {"policy_decision": {"required": ["approval_id"]}, "status": {"const": "APPROVAL_PENDING"}}}},
+    {"if": {"properties": {"policy_decision": {"properties": {"status": {"const": "DENY"}}}}}, "then": {"properties": {"status": {"const": "DENIED"}}}},
+    {"if": {"properties": {"policy_decision": {"properties": {"status": {"const": "ALLOW"}}}}}, "then": {"properties": {"status": {"enum": ["REQUESTED", "RUNNING", "SUCCEEDED", "FAILED", "TIMED_OUT"]}}}},
+    {"if": {"properties": {"risk": {"const": "UNKNOWN"}}}, "then": {"properties": {"policy_decision": {"properties": {"status": {"const": "DENY"}}}}}},
     {"if": {"properties": {"status": {"enum": ["SUCCEEDED", "FAILED", "TIMED_OUT"]}}}, "then": {"required": ["started_at", "completed_at"]}}
   ]
 }

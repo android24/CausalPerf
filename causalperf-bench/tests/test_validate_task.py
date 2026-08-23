@@ -46,6 +46,13 @@ class PackageSeparationTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "leaked"):
                 validate_task.assert_public_package(root)
 
+    def test_rejects_private_canary_set_in_public_package(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "evaluation-canaries.json").write_text("{}", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "leaked"):
+                validate_task.assert_public_package(root)
+
     def test_rejects_git_history(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

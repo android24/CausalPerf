@@ -15,7 +15,7 @@
     "prediction_id": { "type": "string", "minLength": 1 },
     "prediction_registered_at": { "type": "string", "format": "date-time" },
     "first_treatment_at": { "type": "string", "format": "date-time" },
-    "design": { "enum": ["randomized_interleaved", "a1_b_a2", "blocked_ab"] },
+    "design": { "const": "a1_b_a2" },
     "arms": {
       "type": "object", "additionalProperties": false,
       "required": ["a1", "treatment", "a2"],
@@ -27,11 +27,12 @@
     },
     "gates": {
       "type": "object", "additionalProperties": false,
-      "required": ["integrity", "correctness", "environment"],
+      "required": ["integrity", "correctness", "environment", "isolation"],
       "properties": {
         "integrity": { "$ref": "#/$defs/gate" },
         "correctness": { "$ref": "#/$defs/gate" },
-        "environment": { "$ref": "#/$defs/gate" }
+        "environment": { "$ref": "#/$defs/gate" },
+        "isolation": { "$ref": "#/$defs/gate" }
       }
     },
     "statistics": { "$ref": "#/$defs/gate" },

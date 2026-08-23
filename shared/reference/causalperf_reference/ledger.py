@@ -1,12 +1,20 @@
 from __future__ import annotations
 
 from .artifacts import ContractError, digest
+import copy
 
 
 class Ledger:
     def __init__(self, run_id: str):
         self.run_id = run_id
         self.events: list[dict] = []
+
+    @classmethod
+    def from_events(cls, run_id: str, events: list[dict]) -> "Ledger":
+        ledger = cls(run_id)
+        ledger.events = copy.deepcopy(events)
+        ledger.verify()
+        return ledger
 
     def append(self, event: dict) -> dict:
         record = {"schema_version": 1, "run_id": self.run_id, "sequence": len(self.events),

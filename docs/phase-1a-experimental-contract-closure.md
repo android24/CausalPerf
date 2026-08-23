@@ -18,6 +18,21 @@ and consumes no qualification data.
 | WP6 | How is leakage prevented? | clean export, isolation harness, environment/network policy and pre/post canary scan | seeded leaks are detected in every declared channel |
 | WP7 | How are five tasks reproduced? | one versioned reproduction-package contract and partition registry | five empty manifests validate structurally; missing evidence fails completeness |
 
+## Current work-package status
+
+| ID | Phase 1A status | Evidence | Remaining outside this work package |
+|---|---|---|---|
+| WP1 | COMPLETE | `causalperf-contracts@0.6.0` lock covers every current and archived Schema; canonical digests, invariants, partition registry and fail-closed v1→v2 isolation/reproduction migrations have golden tests | future semantic changes require the same archived-schema/migration discipline |
+| WP2 | COMPLETE | typed controller, simulated adapter, atomic recovery, rollback and fault injection | Android adapters in Phase 1B |
+| WP3 | COMPLETE | all C1 gates computed from sealed facts; protected/source/correctness/environment/isolation adversarial tests | producer isolation in WP5/WP6; Android calibration and C2 later |
+| WP4 | COMPLETE | preregistered A1/B/A2 primary and protected metrics, exclusion/invalid accounting, deterministic uncertainty, Bonferroni control and adversarial verdict fixtures | empirical limits calibrate in Phase 1B; new designs require versioned estimators |
+| WP5 | COMPLETE | sealed runtime policy, immutable typed requests, fail-closed scope checks, trusted approval timing, budget reservation, rollback obligations, ToolCall audit and controller integration have adversarial tests | Phase 1B real execution adapters must preserve the frozen authority boundary |
+| WP6 | COMPLETE | sealed isolation policy/run/report and private canary contracts; read-only clean export; split Agent/evaluator views; Linux Bubblewrap, macOS sandbox-exec and Windows Sandbox network/filesystem/process-or-VM boundaries; pre/post workspace/output/log scans; bounded public reasons; seeded adversarial and Darwin host probes | every evaluation host, including Windows, must pass backend conformance; task-specific private scoring arrives with WP7/Phase 1D |
+| WP7 | COMPLETE | reproduction v2 binds every artifact to a partition, permits the same evidence kind only across distinct partitions, requires fresh calibration/qualification evidence, rejects digest reuse and supports target-lifecycle completeness checks; five honest manifests and adversarial tests pass | CPU calibration/qualification evidence and four task implementations are Phase 1B–1D work, not Phase 1A contract work |
+
+WP3's algorithms and trust boundary are normative in
+[Computed causal gates](../shared/docs/computed-causal-gates.md).
+
 ## Dependency order
 
 ```text
@@ -43,8 +58,9 @@ the others.
 
 ### Representation
 
-- JSON Schema Draft 2020-12, `schema_version`, producer version, canonical
-  JSON SHA-256, UTC timestamps and explicit units.
+- JSON Schema Draft 2020-12, `schema_version`, canonical JSON SHA-256, UTC
+  timestamps and explicit units; producer/tool identity is embedded or bound
+  by ToolCall, Artifact and ledger references.
 - `UNKNOWN`/`UNAVAILABLE` are states, never numeric zero.
 - Every measurement references run, partition, arm, environment, source, APK,
   trace/result artifact and inclusion decision.
@@ -109,3 +125,6 @@ Phase 1A is complete only when:
 
 Only then may Phase 1B connect CPU-001 to Gradle, ADB, Macrobenchmark and
 Perfetto for calibration.
+
+The completed evidence and non-claims are recorded in the
+[Phase 1A exit audit](phase-1a-exit-audit.md).

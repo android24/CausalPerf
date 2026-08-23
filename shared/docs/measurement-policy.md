@@ -30,9 +30,10 @@ criterion. Stable tail claims require a larger task-defined sample.
 
 ## Sequence
 
-Use a task-pinned sequence. Preferred local default is randomized blocks with a
-recorded seed. If rebuilding makes interleaving impractical, use `A1-B-A2` and
-require the two baseline blocks to agree within the task stability bound.
+Startup v0.1 uses the task-pinned `A1-B-A2` reversal sequence and requires the
+two baseline blocks to agree within the task stability bound. Randomized and
+blocked designs require their own future Schema version and estimator; declaring
+one while running the A1/B/A2 estimator is forbidden.
 
 ## Reported statistics
 
@@ -46,6 +47,9 @@ require the two baseline blocks to agree within the task stability bound.
 Statistical uncertainty and practical significance are separate gates. A narrow
 confidence interval around a trivial effect does not pass; a large but unstable
 effect is inconclusive.
+
+The executable rules, protected-metric veto and multiplicity policy are defined
+in [Statistical decision contract](statistical-decision-contract.md).
 
 ## Exclusion policy
 

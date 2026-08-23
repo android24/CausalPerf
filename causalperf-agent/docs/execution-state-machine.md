@@ -8,23 +8,25 @@ Execution state and hypothesis state are independent.
 CREATED
   -> VALIDATING
   -> PREPARING_ENVIRONMENT
-  -> REPRODUCING
-  -> COLLECTING_BASELINE
+  -> BUILDING_BASELINE
+  -> VERIFYING_BASELINE_CORRECTNESS
+  -> MEASURING_A1
   -> DIAGNOSING
-  -> PLANNING_EXPERIMENT
-  -> AWAITING_APPROVAL
+  -> REGISTERING
   -> APPLYING_INTERVENTION
-  -> BUILDING
-  -> VERIFYING_CORRECTNESS
-  -> COLLECTING_TREATMENT
-  -> VERIFYING_EFFECT
-  -> REPLICATING
+  -> BUILDING_TREATMENT
+  -> VERIFYING_TREATMENT_CORRECTNESS
+  -> MEASURING_B
+  -> RESTORING_BASELINE
+  -> MEASURING_A2
+  -> VERIFYING
   -> DECIDING
-  -> ROLLING_BACK
+  -> CLEANING_UP
   -> COMPLETED
 ```
 
-Terminal alternatives are `FAILED`, `CANCELLED`, and `ROLLBACK_REQUIRED`.
+Failure branches may enter `ROLLING_BACK`. Terminal alternatives are
+`REJECTED`, `INCONCLUSIVE`, `FAILED`, and `ROLLBACK_REQUIRED`.
 
 ## Transition rules
 
@@ -32,21 +34,24 @@ Terminal alternatives are `FAILED`, `CANCELLED`, and `ROLLBACK_REQUIRED`.
 |---|---|---|
 | CREATED | VALIDATING | run ID and public task received |
 | VALIDATING | PREPARING_ENVIRONMENT | schema, digest, scope, and budget valid |
-| PREPARING_ENVIRONMENT | REPRODUCING | one device resolved; environment valid |
-| REPRODUCING | COLLECTING_BASELINE | task behavior and regression reproducible |
-| COLLECTING_BASELINE | DIAGNOSING | baseline policy satisfied |
-| DIAGNOSING | PLANNING_EXPERIMENT | evidence bundle sealed |
-| PLANNING_EXPERIMENT | AWAITING_APPROVAL | prediction registered; plan valid |
-| AWAITING_APPROVAL | APPLYING_INTERVENTION | required approval recorded |
-| APPLYING_INTERVENTION | BUILDING | protected paths unchanged |
-| BUILDING | VERIFYING_CORRECTNESS | build artifact digest recorded |
-| VERIFYING_CORRECTNESS | COLLECTING_TREATMENT | correctness and integrity pass |
-| COLLECTING_TREATMENT | VERIFYING_EFFECT | treatment policy satisfied |
-| VERIFYING_EFFECT | REPLICATING | preliminary practical/statistical gates pass |
-| REPLICATING | DECIDING | required reversal/replication complete |
-| DECIDING | ROLLING_BACK | patch not accepted or task requires cleanup |
-| DECIDING | COMPLETED | accepted patch may remain in review workspace |
-| ROLLING_BACK | COMPLETED | baseline restoration verified |
+| PREPARING_ENVIRONMENT | BUILDING_BASELINE | environment valid |
+| BUILDING_BASELINE | VERIFYING_BASELINE_CORRECTNESS | baseline artifact sealed |
+| VERIFYING_BASELINE_CORRECTNESS | MEASURING_A1 | baseline correctness passes |
+| MEASURING_A1 | DIAGNOSING | A1 policy satisfied |
+| DIAGNOSING | REGISTERING | evidence bundle and competing hypotheses sealed |
+| REGISTERING | APPLYING_INTERVENTION | prediction, plan, and approval sealed |
+| APPLYING_INTERVENTION | BUILDING_TREATMENT | approved patch applied within scope |
+| BUILDING_TREATMENT | VERIFYING_TREATMENT_CORRECTNESS | treatment artifact sealed |
+| VERIFYING_TREATMENT_CORRECTNESS | MEASURING_B | correctness and integrity pass |
+| MEASURING_B | RESTORING_BASELINE | B policy satisfied |
+| RESTORING_BASELINE | MEASURING_A2 | baseline source/device state verified |
+| MEASURING_A2 | VERIFYING | A2 policy satisfied |
+| VERIFYING | DECIDING | mechanism, statistics and replication gates computed |
+| DECIDING | CLEANING_UP | deterministic decision recorded |
+| CLEANING_UP | COMPLETED | owned resources cleaned and final state verified |
+| any post-mutation failure | ROLLING_BACK | acceptance cannot be established |
+| ROLLING_BACK | REJECTED/INCONCLUSIVE/FAILED | baseline restoration verified |
+| ROLLING_BACK | ROLLBACK_REQUIRED | restoration cannot be verified |
 
 ## Failure semantics
 
@@ -67,6 +72,33 @@ transition, verifies workspace and device state, and either resumes at a safe
 boundary or enters rollback. Commands are not assumed idempotent unless their
 interface explicitly declares it.
 
+`ExecutionSnapshot` is content-addressed and binds the ledger head. Recovery
+from JSON reconstructs and verifies the hash chain before inspecting external
+state. A missing completion after a mutating intent always rolls back; a
+non-idempotent measurement is never repeated automatically. A transport error
+may retry once only for a non-mutating idempotent transition.
+
+`FileRunStore` writes an atomic, fsynced checkpoint after intents, completions,
+and state changes. Checkpoints bind the snapshot and complete ledger; tampering
+or an unsupported version prevents recovery.
+
+When a guarded adapter is installed, policy authorization precedes `INTENT`.
+The policy digest, reserved budget and any new rollback obligation are persisted
+with the authorization ledger event before dispatch. A denial never creates an
+intent or reaches the delegate. An approval-pending request is terminally
+`INCONCLUSIVE` for that invocation and may be resubmitted only with an exact,
+active approval.
+
+## Implemented reference
+
+`src/causalperf_agent/execution/` contains the typed transition model,
+controller, Adapter protocol, Simulated Adapter, persistence and recovery.
+Tests inject failures and crashes at every phase and cover PASS, REJECTED,
+INCONCLUSIVE, rollback failure, process restart, tamper detection and retry
+policy. WP2's execution contract and WP5's authorization integration are Phase
+1A complete. Android
+Gradle/ADB/Perfetto adapters are intentionally deferred to Phase 1B.
+
 ## Hypothesis epistemic states
 
 ```text
@@ -82,4 +114,3 @@ PROPOSED
 
 `PERFORMANCE_VERIFIED` is not enough for causal support unless the mechanism and
 replication requirements in the causal validation protocol pass.
-

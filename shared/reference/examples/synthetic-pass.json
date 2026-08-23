@@ -4,6 +4,72 @@
   "prediction_id": "PR-SYNTHETIC-001",
   "prediction_registered_at": "2026-08-19T00:00:00Z",
   "first_treatment_at": "2026-08-19T00:01:00Z",
+  "intervention": {
+    "allowed_paths": ["app/src"],
+    "patch_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "integrity_inputs": {
+    "protected_paths": ["benchmark", "tests"],
+    "source_manifests": [
+      {
+        "role": "BASELINE",
+        "entries": [
+          {"path": "app/src/Main.kt", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "size_bytes": 100},
+          {"path": "benchmark/StartupBenchmark.kt", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "size_bytes": 200}
+        ]
+      },
+      {
+        "role": "TREATMENT",
+        "applied_patch_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "entries": [
+          {"path": "app/src/Main.kt", "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "size_bytes": 90},
+          {"path": "benchmark/StartupBenchmark.kt", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "size_bytes": 200}
+        ]
+      },
+      {
+        "role": "RESTORED",
+        "entries": [
+          {"path": "app/src/Main.kt", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "size_bytes": 100},
+          {"path": "benchmark/StartupBenchmark.kt", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "size_bytes": 200}
+        ]
+      }
+    ]
+  },
+  "correctness_reports": [
+    {"phase": "BASELINE", "suite_id": "startup-correctness", "suite_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "exit_code": 0, "test_count": 12, "failure_count": 0, "skipped_count": 0, "behavior_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+    {"phase": "TREATMENT", "suite_id": "startup-correctness", "suite_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "exit_code": 0, "test_count": 12, "failure_count": 0, "skipped_count": 0, "behavior_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}
+  ],
+  "environments": [
+    {
+      "id": "ENV-SYNTHETIC",
+      "device": {"serial_hash": "2222222222222222222222222222222222222222222222222222222222222222", "model": "synthetic", "abi": "x86_64", "api_level": 36, "build_fingerprint_sha256": "1111111111111111111111111111111111111111111111111111111111111111"},
+      "runtime": {"battery_percent": 80, "charging": false, "thermal_status": "NONE", "online_cpu_count": 8, "available_memory_mb": 4096, "background_load_percent": 1, "compilation_mode": "partial"},
+      "toolchain": {"adb": "1.0.41"},
+      "validity": {"status": "PASS", "reason_codes": []}
+    }
+  ],
+  "environment_policy": {
+    "api_level": {"minimum": 36, "maximum": 36},
+    "allowed_abis": ["x86_64"],
+    "min_battery_percent": 50,
+    "charging": "ANY",
+    "allowed_thermal_statuses": ["NONE", "LIGHT"],
+    "expected_online_cpu_count": 8,
+    "min_available_memory_mb": 2048,
+    "max_background_load_percent": 5,
+    "compilation_mode": "partial"
+  },
+  "prediction": {
+    "expected_mechanism_change": [
+      {"metric": "main_thread_cpu_ms", "direction": "decrease"}
+    ]
+  },
+  "evidence_by_arm": {
+    "A1": [{"metric": "main_thread_cpu_ms", "value": 500}],
+    "B": [{"metric": "main_thread_cpu_ms", "value": 200}],
+    "A2": [{"metric": "main_thread_cpu_ms", "value": 505}]
+  },
+  "replication_effects_ms": [205, 210],
   "a1": [1000, 1002, 998, 1005, 995, 1001, 999, 1003, 997, 1004, 996, 1000, 1002, 998, 1005, 995, 1001, 999, 1003, 997],
   "treatment": [790, 792, 788, 795, 785, 791, 789, 793, 787, 794, 786, 790, 792, 788, 795, 785, 791, 789, 793, 787],
   "a2": [1004, 1006, 1002, 1009, 999, 1005, 1003, 1007, 1001, 1008, 1000, 1004, 1006, 1002, 1009, 999, 1005, 1003, 1007, 1001]
