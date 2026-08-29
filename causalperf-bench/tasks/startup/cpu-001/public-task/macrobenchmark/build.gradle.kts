@@ -5,6 +5,7 @@ plugins {
 android {
     namespace = "dev.causalperf.startup.cpu.macrobenchmark"
     compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
         minSdk = 29
@@ -30,8 +31,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.test.ext:junit:1.3.0")
-    implementation("androidx.test:runner:1.7.0")
-    implementation("androidx.benchmark:benchmark-macro-junit4:1.4.1")
+    implementation(libs.androidx.test.ext.junit)
+    implementation(libs.androidx.test.runner)
+    implementation(libs.androidx.benchmark.macro.junit4)
 }
-

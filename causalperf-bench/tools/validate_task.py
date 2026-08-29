@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 from typing import Any
@@ -79,7 +80,9 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def validate_private(private_dir: Path, public_task: dict[str, Any]) -> None:
+def validate_private(
+    private_dir: Path, public_task: dict[str, Any], public_dir: Path
+) -> None:
     ground_truth = load_json(private_dir / "ground-truth.json")
     validate(ground_truth, "private-ground-truth.schema.json")
     if ground_truth["task_id"] != public_task["id"]:
@@ -106,6 +109,13 @@ def validate_private(private_dir: Path, public_task: dict[str, Any]) -> None:
         raise ValueError(
             f"Reference patch digest mismatch: expected {artifact['sha256']}, got {actual}"
         )
+    hidden_script = Path(__file__).with_name("validate_hidden_correctness.py")
+    spec = importlib.util.spec_from_file_location("validate_hidden_correctness", hidden_script)
+    if spec is None or spec.loader is None:
+        raise ValueError("Cannot load hidden correctness validator")
+    hidden_validator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(hidden_validator)
+    hidden_validator.validate(private_dir / "hidden-tests", public_dir)
 
 
 def main() -> int:
@@ -120,7 +130,7 @@ def main() -> int:
     assert_access_boundaries(public_task)
     assert_public_package(public_dir)
     if args.private_evaluator:
-        validate_private(args.private_evaluator.resolve(), public_task)
+        validate_private(args.private_evaluator.resolve(), public_task, public_dir)
 
     print(f"PASS {public_task['id']}@{public_task['version']}")
     return 0

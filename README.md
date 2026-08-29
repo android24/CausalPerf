@@ -269,6 +269,7 @@ later without changing their public schemas.
 - [Agent security and execution boundaries](causalperf-agent/docs/security-and-execution-boundaries.md)
 - [Benchmark leakage threat model](causalperf-bench/docs/leakage-threat-model.md)
 - [Benchmark evaluation isolation harness](causalperf-bench/docs/isolation-harness.md)
+- [Android task dry-run contract](causalperf-bench/docs/android-dry-run.md)
 - [Isolation backend conformance](docs/isolation-backend-conformance.md)
 - [Repository strategy](docs/repository-strategy.md)
 - [Runtime schemas](shared/schemas/)
@@ -280,31 +281,35 @@ later without changing their public schemas.
 - [Agent Runtime Policy Engine](causalperf-agent/docs/runtime-policy-engine.md)
 - [Phase 1A work packages](docs/phase-1a-experimental-contract-closure.md)
 - [Phase 1A exit audit](docs/phase-1a-exit-audit.md)
+- [Phase 1B CPU-001 calibration plan](docs/phase-1b-cpu-001-calibration.md)
+- [Android SDK late-binding contract](docs/android-sdk-late-binding.md)
+- [Cross-platform Android toolchain example](config/android-toolchains.example.toml)
 
 ## Status
 
-Concept and scope are complete; executable detailed design is in progress. The
-first CPU startup task is an unbuilt implementation probe, not a frozen
-benchmark. No runnable Agent, trace corpus, statistically calibrated task, or
-production evaluator is present yet.
+Phase 1A is frozen at `causalperf-contracts@0.6.0`; the additive Phase 1B
+contract bundle is `causalperf-contracts@0.7.0`. Phase 1B has started with the
+CPU-001 Android laboratory preflight. The first CPU startup task is an
+unbuilt implementation probe, not a frozen benchmark. No runnable optimization
+Agent, trace corpus, statistically calibrated task, or production evaluator is
+present yet.
 
 ```text
 D0 Concept and scope                 COMPLETE
-D1 Executable data contracts         PHASE 1A COMPLETE (33 locked schemas)
+D1 Executable data contracts         PHASE 1A COMPLETE (37 locked schemas)
 D2 Experiment execution protocol     PHASE 1A COMPLETE (simulated recovery)
 D3 Causal decision engine            PHASE 1A COMPLETE (computed C1 gates)
 D4 Statistical verifier              PHASE 1A COMPLETE (A1/B/A2 + vetoes)
 D5 Agent capability contracts        PHASE 1A COMPLETE (policy + audit)
 D6 Leakage isolation and auditor      PHASE 1A COMPLETE (split views + scans)
-D7 Reproducible Android task corpus   NOT STARTED
+D7 Reproducible Android task corpus   PHASE 1B STARTED (preflight + toolchain + dry-run contracts)
 ```
 
 “In progress” is deliberate: reference and synthetic execution does not count
 as Android validation. The exact remaining entry gates are tracked in
 [Implementation readiness gates](docs/implementation-readiness-gates.md).
 
-The active milestone is **Phase 1A — Experimental Contract Closure**. Its
-device-independent loop validates:
+The completed Phase 1A device-independent loop validates:
 
 ```text
 Task -> Evidence -> Registered prediction -> A1/B/A2 measurements
@@ -312,8 +317,13 @@ Task -> Evidence -> Registered prediction -> A1/B/A2 measurements
      -> Statistical verdict -> Causal decision -> Ledger
 ```
 
-CPU-001 calibration and all remaining Android tasks are intentionally paused
-until every Phase 1A exit gate passes.
+The active milestone is **Phase 1B — CPU-001 Calibration Pilot**. It now has a
+fail-closed Android preflight plus a verified, cross-platform Gradle Wrapper and
+static toolchain-drift gate. Its evaluator-only hidden correctness source and
+computed dry-run result contract are now SDK-free validated. Dependency
+resolution, compilation/device execution of hidden correctness, a real clean
+build, guarded Android execution, measurements and traces remain pending, so
+CPU-001 is still `IMPLEMENTED`, not `CALIBRATED`.
 
 ## Program-level acceptance criteria
 

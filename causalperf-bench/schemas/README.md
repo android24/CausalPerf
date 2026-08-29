@@ -3,6 +3,11 @@
 - `public-task.schema.json` is distributed to the Agent.
 - `private-ground-truth.schema.json` is available only to the evaluator.
 - `evaluation-result.schema.json` defines the evaluator output.
+- `android-dry-run-result.schema.json` binds development-only static validation,
+  preflight, clean/repeated builds, public/hidden correctness and artifact
+  identities before calibration.
+- `hidden-correctness-suite.schema.json` seals evaluator-only Android test
+  overlays without exposing them to the public task.
 - `private-canary-set.schema.json` defines task-bound secrets used only for
   leakage detection.
 - `isolation-policy.schema.json`, `isolation-run.schema.json` and

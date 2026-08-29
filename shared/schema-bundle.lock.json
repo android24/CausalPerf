@@ -1,52 +1,273 @@
 {
   "schema_version": 1,
   "bundle_id": "causalperf-contracts",
-  "bundle_version": "0.6.0",
+  "bundle_version": "0.7.0",
   "json_schema_draft": "https://json-schema.org/draft/2020-12/schema",
   "entries": [
-    {"path":"causalperf-agent/schemas/runtime-policy.schema.json","schema_id":"https://causalperf.dev/agent/schemas/runtime-policy.schema.json","document_schema_version":1,"sha256":"7609a1a4357f56972171c358697e4e24f01dd8cda8c1321601ee246242545af0"},
-    {"path":"causalperf-agent/schemas/tool-contract.schema.json","schema_id":"https://causalperf.dev/agent/schemas/tool-contract.schema.json","document_schema_version":1,"sha256":"b518e5824417b17b4d36ac55339a7e3c0bb0c19df9498cd2ae91301715c559da"},
-    {"path":"causalperf-bench/schemas/archive/isolation-policy.v1.schema.json","schema_id":"https://causalperf.dev/bench/schemas/isolation-policy.schema.json","document_schema_version":1,"sha256":"53f0a7123c3233b0fd68c0613964b7309cd418d162bd9d6c5d0b0eba03ab8c45"},
-    {"path":"causalperf-bench/schemas/archive/isolation-report.v1.schema.json","schema_id":"https://causalperf.dev/bench/schemas/isolation-report.schema.json","document_schema_version":1,"sha256":"69b6170e779113a1e5305ee23d17c2f48fdf8955b8e1c3a1b30587eb44eb7f6f"},
-    {"path":"causalperf-bench/schemas/archive/isolation-run.v1.schema.json","schema_id":"https://causalperf.dev/bench/schemas/isolation-run.schema.json","document_schema_version":1,"sha256":"e9c877f73863e95ecdedfd0321326804483610941115bd89970fc1ab6ebc1c01"},
-    {"path":"causalperf-bench/schemas/archive/task-reproduction-package.v1.schema.json","schema_id":"https://causalperf.dev/schemas/task-reproduction-package.schema.json","document_schema_version":1,"sha256":"cf6a3671c95599fdbfe4d2d5943e17d5d289aaa8f9ebbcf75ffa994dcd9ddd5f"},
-    {"path":"causalperf-bench/schemas/evaluation-result.schema.json","schema_id":"https://causalperf.dev/schemas/evaluation-result.schema.json","document_schema_version":1,"sha256":"c5bd69d98f9896bff648536ce170e1503145f59405ddc5540d91f90a37eb43dd"},
-    {"path":"causalperf-bench/schemas/isolation-policy.schema.json","schema_id":"https://causalperf.dev/bench/schemas/isolation-policy.schema.json","document_schema_version":2,"sha256":"4b8c79de304023e23d428f9e21d7b457e7cf90bb08808a1d77ad2ce67bcd321d"},
-    {"path":"causalperf-bench/schemas/isolation-report.schema.json","schema_id":"https://causalperf.dev/bench/schemas/isolation-report.schema.json","document_schema_version":2,"sha256":"27dd5ab95c2a6303c30e4cd7385f9f66f6402ded8b15203dc980fe21398b3c63"},
-    {"path":"causalperf-bench/schemas/isolation-run.schema.json","schema_id":"https://causalperf.dev/bench/schemas/isolation-run.schema.json","document_schema_version":2,"sha256":"21a82104c95b544e433f8fed3a1e8199217053e3cff99d8a0df8af0c24aa00bf"},
-    {"path":"causalperf-bench/schemas/private-canary-set.schema.json","schema_id":"https://causalperf.dev/bench/schemas/private-canary-set.schema.json","document_schema_version":1,"sha256":"bbffd986a88e3efc7d45c27dad400124df592d9dca21fbb37ed2f3c83ed778dc"},
-    {"path":"causalperf-bench/schemas/private-ground-truth.schema.json","schema_id":"https://causalperf.dev/schemas/private-ground-truth.schema.json","document_schema_version":1,"sha256":"6d65ca8d0e8a711d43361dd7b6e5d6759e9ee79822290a996ed40410a2323607"},
-    {"path":"causalperf-bench/schemas/public-task.schema.json","schema_id":"https://causalperf.dev/schemas/public-task.schema.json","document_schema_version":1,"sha256":"63956fda2b19bd077f76863491f9640cd62bec67c5d7685cbee246710431f40c"},
-    {"path":"causalperf-bench/schemas/task-reproduction-package.schema.json","schema_id":"https://causalperf.dev/schemas/task-reproduction-package.schema.json","document_schema_version":2,"sha256":"7764eae2eb4f0726ed7064b45be885cd367c090da2fea9d6b0e8cfe5f7cadcc7"},
-    {"path":"shared/schemas/approval-record.schema.json","schema_id":"https://causalperf.dev/schemas/approval-record.schema.json","document_schema_version":1,"sha256":"be837e90e1de627325b05fafacf63356c3cfe04e95969672a532ff473dd189b4"},
-    {"path":"shared/schemas/artifact.schema.json","schema_id":"https://causalperf.dev/schemas/artifact.schema.json","document_schema_version":1,"sha256":"f47d233389b55a4aec041bc7e5b7486d051df34008bac483cc11d2e570fe6069"},
-    {"path":"shared/schemas/build-result.schema.json","schema_id":"https://causalperf.dev/schemas/build-result.schema.json","document_schema_version":1,"sha256":"468dfc5175e2c3df85984555814bd9ad000a9075d73be4479dd38ed7e4ed298d"},
-    {"path":"shared/schemas/correctness-report.schema.json","schema_id":"https://causalperf.dev/schemas/correctness-report.schema.json","document_schema_version":1,"sha256":"3508bafe375b02f238c41a8912dd43645f7385fb7676a7832f94a4e16b3508ff"},
-    {"path":"shared/schemas/environment-policy.schema.json","schema_id":"https://causalperf.dev/schemas/environment-policy.schema.json","document_schema_version":1,"sha256":"3bd57580b87b94c755adbe4d38ae63c54f3ef59229cb5129a2cb23bf63cc64d3"},
-    {"path":"shared/schemas/environment-snapshot.schema.json","schema_id":"https://causalperf.dev/schemas/environment-snapshot.schema.json","document_schema_version":1,"sha256":"77282eb2b6752f67c1978dfc6a069292bd4c67eafcc18ea34301b11572daf1b3"},
-    {"path":"shared/schemas/evidence.schema.json","schema_id":"https://causalperf.dev/schemas/evidence.schema.json","document_schema_version":1,"sha256":"31f79397777839103a322d519dabc5bd77bab76f12ae5967732f1d8562b962fd"},
-    {"path":"shared/schemas/execution-snapshot.schema.json","schema_id":"https://causalperf.dev/schemas/execution-snapshot.schema.json","document_schema_version":1,"sha256":"15b962d1c403fe8b691a81ddb6593befff8266783c1d2c75a70f7070bb5b7e1a"},
-    {"path":"shared/schemas/experiment-result.schema.json","schema_id":"https://causalperf.dev/schemas/experiment-result.schema.json","document_schema_version":1,"sha256":"267a22dcbb5d637feb2230a4286439fb4af75004bf45566b82327505f4b6096b"},
-    {"path":"shared/schemas/experiment.schema.json","schema_id":"https://causalperf.dev/schemas/experiment.schema.json","document_schema_version":1,"sha256":"2b4782e0afd1bca94d2b923625dd294eeedbca834e484e8640083c28ca7f9689"},
-    {"path":"shared/schemas/gate-result.schema.json","schema_id":"https://causalperf.dev/schemas/gate-result.schema.json","document_schema_version":1,"sha256":"3216e2065102e54a52ef12d70dd791e3312b8ea149edbc6915a4504137fa23a4"},
-    {"path":"shared/schemas/hypothesis.schema.json","schema_id":"https://causalperf.dev/schemas/hypothesis.schema.json","document_schema_version":1,"sha256":"72ec487b54ad873d1a77ecbe488ca9e7370a1cf50de93bcbcb81db9398d02177"},
-    {"path":"shared/schemas/integrity-input.schema.json","schema_id":"https://causalperf.dev/schemas/integrity-input.schema.json","document_schema_version":1,"sha256":"9d71cd664612b17e51c38cff22a1309e3892a4aea417055301cda647370e7511"},
-    {"path":"shared/schemas/intervention-plan.schema.json","schema_id":"https://causalperf.dev/schemas/intervention-plan.schema.json","document_schema_version":1,"sha256":"2fffdcda3dfa15e7abddef37011747f0d5463b94e95406276a6793d877150a37"},
-    {"path":"shared/schemas/ledger-event.schema.json","schema_id":"https://causalperf.dev/schemas/ledger-event.schema.json","document_schema_version":1,"sha256":"bc1043828a8797bfbcb8a20dddaeeafabdfb0b965b30487ce5795bef9628c9ef"},
-    {"path":"shared/schemas/measurement-set.schema.json","schema_id":"https://causalperf.dev/schemas/measurement-set.schema.json","document_schema_version":1,"sha256":"ad49e30f3c35bcbf7a5c6484f093a62f21f28cc22a09735f0e17984acaca05a4"},
-    {"path":"shared/schemas/partition-registry.schema.json","schema_id":"https://causalperf.dev/schemas/partition-registry.schema.json","document_schema_version":1,"sha256":"2a712047eafa1824a32f865176b369a3daa728710094531a0b31cb10fbbf3d66"},
-    {"path":"shared/schemas/prediction.schema.json","schema_id":"https://causalperf.dev/schemas/prediction.schema.json","document_schema_version":1,"sha256":"416525bc2d7e524c13cc8e4ce06bdfe78cbb04041972b08673b424b9c8df17e1"},
-    {"path":"shared/schemas/rollback-result.schema.json","schema_id":"https://causalperf.dev/schemas/rollback-result.schema.json","document_schema_version":1,"sha256":"3c3103d7c5b14f2bc8dabc9aba095d9f36986d70f4e0c7d8f7b660307fb6c813"},
-    {"path":"shared/schemas/schema-bundle.schema.json","schema_id":"https://causalperf.dev/schemas/schema-bundle.schema.json","document_schema_version":1,"sha256":"5a2271a1799bdd1f0ed072a2c2774042a220000961a1049a6a096a428eb010c4"},
-    {"path":"shared/schemas/source-manifest.schema.json","schema_id":"https://causalperf.dev/schemas/source-manifest.schema.json","document_schema_version":1,"sha256":"84c1f3d50e9b1a66ceef21a82075e8af55641379cc9d1253eb6c2225a57a7251"},
-    {"path":"shared/schemas/statistical-policy.schema.json","schema_id":"https://causalperf.dev/schemas/statistical-policy.schema.json","document_schema_version":1,"sha256":"9baf3fbe4ac33d4b91ff1427cf70a23f08fe0a1258dc12535d95beb0a6cccb04"},
-    {"path":"shared/schemas/tool-call.schema.json","schema_id":"https://causalperf.dev/schemas/tool-call.schema.json","document_schema_version":1,"sha256":"88f7f0114ba73a48d1e68a0c7b7a05d47a99dbfa463f01cd54b6b47b8f39d927"}
+    {
+      "path": "causalperf-agent/schemas/runtime-policy.schema.json",
+      "schema_id": "https://causalperf.dev/agent/schemas/runtime-policy.schema.json",
+      "document_schema_version": 1,
+      "sha256": "7609a1a4357f56972171c358697e4e24f01dd8cda8c1321601ee246242545af0"
+    },
+    {
+      "path": "causalperf-agent/schemas/tool-contract.schema.json",
+      "schema_id": "https://causalperf.dev/agent/schemas/tool-contract.schema.json",
+      "document_schema_version": 1,
+      "sha256": "b518e5824417b17b4d36ac55339a7e3c0bb0c19df9498cd2ae91301715c559da"
+    },
+    {
+      "path": "causalperf-bench/schemas/android-dry-run-result.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/android-dry-run-result.schema.json",
+      "document_schema_version": 1,
+      "sha256": "34fc69a76d55d57c3233f275907529506e3c1ed5296c79b4663b028d0b2435c2"
+    },
+    {
+      "path": "causalperf-bench/schemas/archive/isolation-policy.v1.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-policy.schema.json",
+      "document_schema_version": 1,
+      "sha256": "53f0a7123c3233b0fd68c0613964b7309cd418d162bd9d6c5d0b0eba03ab8c45"
+    },
+    {
+      "path": "causalperf-bench/schemas/archive/isolation-report.v1.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-report.schema.json",
+      "document_schema_version": 1,
+      "sha256": "69b6170e779113a1e5305ee23d17c2f48fdf8955b8e1c3a1b30587eb44eb7f6f"
+    },
+    {
+      "path": "causalperf-bench/schemas/archive/isolation-run.v1.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-run.schema.json",
+      "document_schema_version": 1,
+      "sha256": "e9c877f73863e95ecdedfd0321326804483610941115bd89970fc1ab6ebc1c01"
+    },
+    {
+      "path": "causalperf-bench/schemas/archive/task-reproduction-package.v1.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/task-reproduction-package.schema.json",
+      "document_schema_version": 1,
+      "sha256": "cf6a3671c95599fdbfe4d2d5943e17d5d289aaa8f9ebbcf75ffa994dcd9ddd5f"
+    },
+    {
+      "path": "causalperf-bench/schemas/evaluation-result.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/evaluation-result.schema.json",
+      "document_schema_version": 1,
+      "sha256": "c5bd69d98f9896bff648536ce170e1503145f59405ddc5540d91f90a37eb43dd"
+    },
+    {
+      "path": "causalperf-bench/schemas/hidden-correctness-suite.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/hidden-correctness-suite.schema.json",
+      "document_schema_version": 1,
+      "sha256": "09126b069f0b34e571d48e75ecdd6ed9215365d4393c1f259ebe7e11df9c61e5"
+    },
+    {
+      "path": "causalperf-bench/schemas/isolation-policy.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-policy.schema.json",
+      "document_schema_version": 2,
+      "sha256": "4b8c79de304023e23d428f9e21d7b457e7cf90bb08808a1d77ad2ce67bcd321d"
+    },
+    {
+      "path": "causalperf-bench/schemas/isolation-report.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-report.schema.json",
+      "document_schema_version": 2,
+      "sha256": "27dd5ab95c2a6303c30e4cd7385f9f66f6402ded8b15203dc980fe21398b3c63"
+    },
+    {
+      "path": "causalperf-bench/schemas/isolation-run.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-run.schema.json",
+      "document_schema_version": 2,
+      "sha256": "21a82104c95b544e433f8fed3a1e8199217053e3cff99d8a0df8af0c24aa00bf"
+    },
+    {
+      "path": "causalperf-bench/schemas/private-canary-set.schema.json",
+      "schema_id": "https://causalperf.dev/bench/schemas/private-canary-set.schema.json",
+      "document_schema_version": 1,
+      "sha256": "bbffd986a88e3efc7d45c27dad400124df592d9dca21fbb37ed2f3c83ed778dc"
+    },
+    {
+      "path": "causalperf-bench/schemas/private-ground-truth.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/private-ground-truth.schema.json",
+      "document_schema_version": 1,
+      "sha256": "6d65ca8d0e8a711d43361dd7b6e5d6759e9ee79822290a996ed40410a2323607"
+    },
+    {
+      "path": "causalperf-bench/schemas/public-task.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/public-task.schema.json",
+      "document_schema_version": 1,
+      "sha256": "63956fda2b19bd077f76863491f9640cd62bec67c5d7685cbee246710431f40c"
+    },
+    {
+      "path": "causalperf-bench/schemas/task-reproduction-package.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/task-reproduction-package.schema.json",
+      "document_schema_version": 2,
+      "sha256": "7764eae2eb4f0726ed7064b45be885cd367c090da2fea9d6b0e8cfe5f7cadcc7"
+    },
+    {
+      "path": "shared/schemas/approval-record.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/approval-record.schema.json",
+      "document_schema_version": 1,
+      "sha256": "be837e90e1de627325b05fafacf63356c3cfe04e95969672a532ff473dd189b4"
+    },
+    {
+      "path": "shared/schemas/artifact.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/artifact.schema.json",
+      "document_schema_version": 1,
+      "sha256": "f47d233389b55a4aec041bc7e5b7486d051df34008bac483cc11d2e570fe6069"
+    },
+    {
+      "path": "shared/schemas/build-result.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/build-result.schema.json",
+      "document_schema_version": 1,
+      "sha256": "468dfc5175e2c3df85984555814bd9ad000a9075d73be4479dd38ed7e4ed298d"
+    },
+    {
+      "path": "shared/schemas/correctness-report.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/correctness-report.schema.json",
+      "document_schema_version": 1,
+      "sha256": "3508bafe375b02f238c41a8912dd43645f7385fb7676a7832f94a4e16b3508ff"
+    },
+    {
+      "path": "shared/schemas/environment-policy.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/environment-policy.schema.json",
+      "document_schema_version": 1,
+      "sha256": "3bd57580b87b94c755adbe4d38ae63c54f3ef59229cb5129a2cb23bf63cc64d3"
+    },
+    {
+      "path": "shared/schemas/environment-snapshot.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/environment-snapshot.schema.json",
+      "document_schema_version": 1,
+      "sha256": "77282eb2b6752f67c1978dfc6a069292bd4c67eafcc18ea34301b11572daf1b3"
+    },
+    {
+      "path": "shared/schemas/evidence.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/evidence.schema.json",
+      "document_schema_version": 1,
+      "sha256": "31f79397777839103a322d519dabc5bd77bab76f12ae5967732f1d8562b962fd"
+    },
+    {
+      "path": "shared/schemas/execution-snapshot.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/execution-snapshot.schema.json",
+      "document_schema_version": 1,
+      "sha256": "15b962d1c403fe8b691a81ddb6593befff8266783c1d2c75a70f7070bb5b7e1a"
+    },
+    {
+      "path": "shared/schemas/experiment-result.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/experiment-result.schema.json",
+      "document_schema_version": 1,
+      "sha256": "267a22dcbb5d637feb2230a4286439fb4af75004bf45566b82327505f4b6096b"
+    },
+    {
+      "path": "shared/schemas/experiment.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/experiment.schema.json",
+      "document_schema_version": 1,
+      "sha256": "2b4782e0afd1bca94d2b923625dd294eeedbca834e484e8640083c28ca7f9689"
+    },
+    {
+      "path": "shared/schemas/gate-result.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/gate-result.schema.json",
+      "document_schema_version": 1,
+      "sha256": "3216e2065102e54a52ef12d70dd791e3312b8ea149edbc6915a4504137fa23a4"
+    },
+    {
+      "path": "shared/schemas/hypothesis.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/hypothesis.schema.json",
+      "document_schema_version": 1,
+      "sha256": "72ec487b54ad873d1a77ecbe488ca9e7370a1cf50de93bcbcb81db9398d02177"
+    },
+    {
+      "path": "shared/schemas/integrity-input.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/integrity-input.schema.json",
+      "document_schema_version": 1,
+      "sha256": "9d71cd664612b17e51c38cff22a1309e3892a4aea417055301cda647370e7511"
+    },
+    {
+      "path": "shared/schemas/intervention-plan.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/intervention-plan.schema.json",
+      "document_schema_version": 1,
+      "sha256": "2fffdcda3dfa15e7abddef37011747f0d5463b94e95406276a6793d877150a37"
+    },
+    {
+      "path": "shared/schemas/ledger-event.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/ledger-event.schema.json",
+      "document_schema_version": 1,
+      "sha256": "bc1043828a8797bfbcb8a20dddaeeafabdfb0b965b30487ce5795bef9628c9ef"
+    },
+    {
+      "path": "shared/schemas/measurement-set.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/measurement-set.schema.json",
+      "document_schema_version": 1,
+      "sha256": "ad49e30f3c35bcbf7a5c6484f093a62f21f28cc22a09735f0e17984acaca05a4"
+    },
+    {
+      "path": "shared/schemas/partition-registry.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/partition-registry.schema.json",
+      "document_schema_version": 1,
+      "sha256": "2a712047eafa1824a32f865176b369a3daa728710094531a0b31cb10fbbf3d66"
+    },
+    {
+      "path": "shared/schemas/prediction.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/prediction.schema.json",
+      "document_schema_version": 1,
+      "sha256": "416525bc2d7e524c13cc8e4ce06bdfe78cbb04041972b08673b424b9c8df17e1"
+    },
+    {
+      "path": "shared/schemas/rollback-result.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/rollback-result.schema.json",
+      "document_schema_version": 1,
+      "sha256": "3c3103d7c5b14f2bc8dabc9aba095d9f36986d70f4e0c7d8f7b660307fb6c813"
+    },
+    {
+      "path": "shared/schemas/schema-bundle.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/schema-bundle.schema.json",
+      "document_schema_version": 1,
+      "sha256": "5a2271a1799bdd1f0ed072a2c2774042a220000961a1049a6a096a428eb010c4"
+    },
+    {
+      "path": "shared/schemas/source-manifest.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/source-manifest.schema.json",
+      "document_schema_version": 1,
+      "sha256": "84c1f3d50e9b1a66ceef21a82075e8af55641379cc9d1253eb6c2225a57a7251"
+    },
+    {
+      "path": "shared/schemas/statistical-policy.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/statistical-policy.schema.json",
+      "document_schema_version": 1,
+      "sha256": "9baf3fbe4ac33d4b91ff1427cf70a23f08fe0a1258dc12535d95beb0a6cccb04"
+    },
+    {
+      "path": "shared/schemas/tool-call.schema.json",
+      "schema_id": "https://causalperf.dev/schemas/tool-call.schema.json",
+      "document_schema_version": 1,
+      "sha256": "88f7f0114ba73a48d1e68a0c7b7a05d47a99dbfa463f01cd54b6b47b8f39d927"
+    }
   ],
   "migration_registry": [
-    {"schema_id":"https://causalperf.dev/bench/schemas/isolation-policy.schema.json","from_version":1,"to_version":2,"function":"_migrate_isolation_contract_v1_to_v2","information_loss":[]},
-    {"schema_id":"https://causalperf.dev/bench/schemas/isolation-report.schema.json","from_version":1,"to_version":2,"function":"_migrate_isolation_contract_v1_to_v2","information_loss":[]},
-    {"schema_id":"https://causalperf.dev/bench/schemas/isolation-run.schema.json","from_version":1,"to_version":2,"function":"_migrate_isolation_contract_v1_to_v2","information_loss":[]},
-    {"schema_id":"https://causalperf.dev/schemas/task-reproduction-package.schema.json","from_version":1,"to_version":2,"function":"_migrate_task_reproduction_v1_to_v2","information_loss":[]}
+    {
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-policy.schema.json",
+      "from_version": 1,
+      "to_version": 2,
+      "function": "_migrate_isolation_contract_v1_to_v2",
+      "information_loss": []
+    },
+    {
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-report.schema.json",
+      "from_version": 1,
+      "to_version": 2,
+      "function": "_migrate_isolation_contract_v1_to_v2",
+      "information_loss": []
+    },
+    {
+      "schema_id": "https://causalperf.dev/bench/schemas/isolation-run.schema.json",
+      "from_version": 1,
+      "to_version": 2,
+      "function": "_migrate_isolation_contract_v1_to_v2",
+      "information_loss": []
+    },
+    {
+      "schema_id": "https://causalperf.dev/schemas/task-reproduction-package.schema.json",
+      "from_version": 1,
+      "to_version": 2,
+      "function": "_migrate_task_reproduction_v1_to_v2",
+      "information_loss": []
+    }
   ],
-  "bundle_sha256": "d312557a1d6b07636deac527f36f6c9dbd36dcdee228f26b4daeb5531e5a2e2b"
+  "bundle_sha256": "9ea41180dc46b62ea08991b55e8d1ddc07764fbe9b41212b6596bf16c5a01809"
 }

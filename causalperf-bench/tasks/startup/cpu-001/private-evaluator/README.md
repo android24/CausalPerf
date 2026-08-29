@@ -8,8 +8,8 @@ Contents:
 
 - `ground-truth.json`: causal mechanism and accepted intervention classes;
 - `expert-patch.diff`: one validated reference intervention;
-- `hidden-tests/`: evaluator-only integrity checks.
+- `hidden-tests/suite.json`: sealed overlay identity and execution contract;
+- `hidden-tests/src/`: evaluator-only Android correctness source.
 
 The reference patch is illustrative until it has passed the required physical-
 device pilot. Its digest is pinned in `ground-truth.json`.
-

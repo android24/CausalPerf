@@ -48,8 +48,11 @@ code before a real compatibility change exists.
 
 ## Bundle release
 
-`shared/schema-bundle.lock.json` is the released `causalperf-contracts@0.6.0`
-contract set. It enumerates every shared, Agent and Bench JSON Schema by path,
+`shared/schema-bundle.lock.json` is the current `causalperf-contracts@0.7.0`
+contract set. Phase 1A remains immutably tagged at
+`causalperf-contracts@0.6.0`; 0.7.0 adds Phase 1B Android dry-run and hidden
+correctness contracts without changing a 0.6.0 document Schema. The lock
+enumerates every shared, Agent and Bench JSON Schema by path,
 `$id`, document version and raw-byte SHA-256, and seals that list with a
 canonical bundle digest. Adding, removing or editing any Schema requires an
 intentional bundle-version update.

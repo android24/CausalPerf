@@ -6,8 +6,8 @@
   "lifecycle": "IMPLEMENTED",
   "artifacts": [
     {"kind": "TASK_SPEC", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "SPEC.md", "sha256": "9ddb8d190ef2b4d5bc45a1371dad7a35dc123763200cae58e6fce88e142f1d89"},
-    {"kind": "SOURCE", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "public-task/app", "sha256": "d62eace825c24d028947101147b5c6eca4524fc666c503e3a990a436f919ecab"},
-    {"kind": "PUBLIC_TASK", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "public-task/task.yaml", "sha256": "bd1569abecb7e896682ec5c97650ac118a6fb84b749ec4973bfced67c36d0e4d"},
+    {"kind": "SOURCE", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "public-task/app", "sha256": "162a5737b9a29ce75c3f784865ee4aeb9f54f6f3f900b67150a149a8a8ee017e"},
+    {"kind": "PUBLIC_TASK", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "public-task/task.yaml", "sha256": "eaecdfec5a4697cc5562eee57d18c2ccbbf25e45242393386662b44bbd238dc9"},
     {"kind": "CORRECTNESS_TESTS", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "public-task/app/src/androidTest/java/dev/causalperf/startup/cpu/StartupCorrectnessTest.kt", "sha256": "d09f4a42c18c7838d11b3f3a4e69767d6a71950ce23825774c6c51d6bd437c4c"},
     {"kind": "BENCHMARK_SCENARIO", "partition": "DEVELOPMENT", "visibility": "PUBLIC", "status": "PRESENT", "relative_path": "public-task/macrobenchmark/src/main/java/dev/causalperf/startup/cpu/macrobenchmark/ColdStartupBenchmark.kt", "sha256": "2bf0ae2612829e05cac37e3d14f86add77a63ee3454286592077948a397f2b22"},
     {"kind": "GROUND_TRUTH", "partition": "DEVELOPMENT", "visibility": "PRIVATE", "status": "PRESENT", "relative_path": "private-evaluator/ground-truth.json", "sha256": "7a81b7bb73fd2d54be122508fb97989785542a28c102cfde53fe8353cc88f335"},
@@ -31,8 +31,8 @@
       "session_ids": [],
       "artifact_sha256s": [
         "9ddb8d190ef2b4d5bc45a1371dad7a35dc123763200cae58e6fce88e142f1d89",
-        "d62eace825c24d028947101147b5c6eca4524fc666c503e3a990a436f919ecab",
-        "bd1569abecb7e896682ec5c97650ac118a6fb84b749ec4973bfced67c36d0e4d",
+        "162a5737b9a29ce75c3f784865ee4aeb9f54f6f3f900b67150a149a8a8ee017e",
+        "eaecdfec5a4697cc5562eee57d18c2ccbbf25e45242393386662b44bbd238dc9",
         "d09f4a42c18c7838d11b3f3a4e69767d6a71950ce23825774c6c51d6bd437c4c",
         "2bf0ae2612829e05cac37e3d14f86add77a63ee3454286592077948a397f2b22",
         "7a81b7bb73fd2d54be122508fb97989785542a28c102cfde53fe8353cc88f335",

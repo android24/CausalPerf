@@ -157,16 +157,24 @@ The first usable Agent milestone requires:
 
 ## Status
 
-The production Android evidence and device adapters are not implemented. The
-device-independent execution core is now executable: it includes a typed state
+The production Android build, benchmark and evidence adapters are not yet
+implemented. Phase 1B now includes a read-only Android laboratory preflight
+that resolves an explicit device, verifies the pinned host toolchain, samples
+device/environment state, hashes identifying values, and emits a schema-valid
+`EnvironmentSnapshot` or a fail-closed `INCONCLUSIVE` result. The
+preflight is enforced at the state machine's `PREPARING_ENVIRONMENT` boundary,
+so an invalid environment cannot reach baseline build or trigger a Wrapper
+download. CPU-001 also has a task-local cross-platform Gradle Wrapper and an
+SDK-free static drift gate; these are reproducibility inputs, not a successful
+Android build result. The device-independent
+execution core includes a typed state
 machine, Adapter protocol, simulated A1/B/A2 flow, hash-chained intents and
 completions, persisted recovery snapshots, rollback behavior, fault injection,
 bounded transport retry, and a fail-closed Runtime Policy Engine. The policy
 layer enforces typed capabilities, exact approvals, command/path/device scope,
 immutable budgets, pre-mutation rollback obligations and ToolCall audit records
-outside the model. It is Phase 1A infrastructure, not a runnable Android
-optimization Agent; OS isolation remains WP6 and Android adapters remain Phase
-1B.
+outside the model. OS isolation and the Phase 1A contracts are complete, but
+the preflight alone is not a runnable Android optimization Agent.
 
 ## Design documents
 
@@ -177,6 +185,8 @@ optimization Agent; OS isolation remains WP6 and Android adapters remain Phase
 - [Tool contracts](docs/tool-contracts.md)
 - [Runtime Policy Engine](docs/runtime-policy-engine.md)
 - [Security and execution boundaries](docs/security-and-execution-boundaries.md)
+- [Phase 1B CPU-001 calibration plan](../docs/phase-1b-cpu-001-calibration.md)
+- [Android SDK late-binding contract](../docs/android-sdk-late-binding.md)
 
 Cross-project artifact schemas and causal/statistical reference logic live in
 [`../shared`](../shared/README.md); they are dependencies of the Agent, not

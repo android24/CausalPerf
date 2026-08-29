@@ -27,17 +27,17 @@ source:
 
 commands:
   build:
-    executable: gradle
-    args: [":app:assembleBenchmark"]
+    executable: gradle-wrapper
+    args: ["clean", ":app:assembleBenchmark"]
     working_directory: .
     timeout_seconds: 1200
   correctness:
-    executable: gradle
+    executable: gradle-wrapper
     args: [":app:connectedBenchmarkAndroidTest"]
     working_directory: .
     timeout_seconds: 1800
   performance:
-    executable: gradle
+    executable: gradle-wrapper
     args: [":macrobenchmark:connectedCheck"]
     working_directory: .
     timeout_seconds: 7200
@@ -62,4 +62,3 @@ budgets:
   max_experiments: 5
   max_patch_files: 8
   max_patch_lines: 500
-

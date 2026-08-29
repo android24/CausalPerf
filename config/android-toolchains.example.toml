@@ -1,0 +1,23 @@
+schema_version = 1
+
+# Copy this file outside the repository or rename it for local use. Paths are
+# examples only. The matching host profile is selected automatically, or can be
+# selected explicitly with --toolchain-profile.
+
+[profiles.macos]
+host_os = "Darwin"
+jdk_home = "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+android_sdk_root = "/Volumes/AndroidSDK"
+gradle_executable = "./causalperf-bench/tasks/startup/cpu-001/public-task/gradlew"
+
+[profiles.windows]
+host_os = "Windows"
+jdk_home = 'C:\Program Files\Android\Android Studio\jbr'
+android_sdk_root = 'D:\Android\Sdk'
+gradle_executable = '.\causalperf-bench\tasks\startup\cpu-001\public-task\gradlew.bat'
+
+[profiles.linux]
+host_os = "Linux"
+jdk_home = "/opt/jdk-17"
+android_sdk_root = "/opt/android-sdk"
+gradle_executable = "./causalperf-bench/tasks/startup/cpu-001/public-task/gradlew"

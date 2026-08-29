@@ -9,7 +9,7 @@ from typing import Callable
 from .artifacts import ContractError, digest
 
 
-BUNDLE_VERSION = "0.6.0"
+BUNDLE_VERSION = "0.7.0"
 SCHEMA_PATTERNS = (
     "shared/schemas/*.json",
     "causalperf-agent/schemas/**/*.schema.json",

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "HCS-CPU-001-V1",
+  "task_id": "startup-main-thread-cpu-001",
+  "task_version": "0.1.0",
+  "suite_id": "cpu-001-hidden-correctness-v1",
+  "files": [
+    {
+      "source": "src/androidTest/java/dev/causalperf/startup/cpu/Cpu001HiddenCorrectnessTest.kt",
+      "destination": "app/src/androidTest/java/dev/causalperf/startup/cpu/Cpu001HiddenCorrectnessTest.kt",
+      "sha256": "456c6ccc4dbbcdccb52c9c510f7ae354fa15ce947c5553849e6f141ebaab0b42"
+    }
+  ],
+  "command": {
+    "executable": "gradle-wrapper",
+    "args": [":app:connectedBenchmarkAndroidTest"],
+    "working_directory": ".",
+    "timeout_seconds": 1800
+  },
+  "forbidden_main_source_tokens": [
+    "InstrumentationRegistry",
+    "getArguments(",
+    "startup-main-thread-cpu-001",
+    "androidx.benchmark",
+    "testOnly"
+  ],
+  "content_sha256": "7a7edfdcd536052d06160ea567286ba2250f07a6000de2604bad86a53ec0dba4"
+}

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalperf.dev/bench/schemas/android-dry-run-result.schema.json",
+  "title": "CausalPerf Android Dry Run Result",
+  "description": "Development-only, runner-computed evidence that an Android task can be clean-built, checked and reproduced before calibration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "id", "task_id", "task_version", "run_id",
+    "partition", "started_at", "completed_at", "task_package_sha256",
+    "toolchain_lock_sha256", "static_validation", "preflight", "builds",
+    "correctness", "status", "reason_codes", "artifact_digests",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^ADR-[A-Z0-9-]+$"},
+    "task_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+    "task_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "run_id": {"type": "string", "minLength": 1},
+    "partition": {"const": "DEVELOPMENT"},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "task_package_sha256": {"$ref": "#/$defs/digest"},
+    "toolchain_lock_sha256": {"$ref": "#/$defs/digest"},
+    "static_validation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["command_sha256", "exit_code", "result_artifact_sha256"],
+      "properties": {
+        "command_sha256": {"$ref": "#/$defs/digest"},
+        "exit_code": {"type": "integer"},
+        "result_artifact_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "preflight": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reason_codes", "result_artifact_sha256"],
+      "properties": {
+        "status": {"enum": ["PASS", "INCONCLUSIVE"]},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "environment_snapshot_sha256": {"$ref": "#/$defs/digest"},
+        "result_artifact_sha256": {"$ref": "#/$defs/digest"}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"required": ["environment_snapshot_sha256"]}}
+      ]
+    },
+    "builds": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baseline", "restored"],
+      "properties": {
+        "baseline": {"$ref": "#/$defs/build"},
+        "restored": {"$ref": "#/$defs/build"}
+      }
+    },
+    "correctness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["public", "hidden"],
+      "properties": {
+        "public": {"$ref": "#/$defs/correctness"},
+        "hidden": {"$ref": "#/$defs/correctness"}
+      }
+    },
+    "status": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+    "reason_codes": {
+      "type": "array", "uniqueItems": true,
+      "items": {"enum": [
+        "STATIC_TOOLCHAIN_INVALID", "PREFLIGHT_INCONCLUSIVE",
+        "BASELINE_CLEAN_BUILD_REQUIRED", "BASELINE_BUILD_FAILED",
+        "RESTORED_CLEAN_BUILD_REQUIRED", "RESTORED_BUILD_FAILED",
+        "PUBLIC_CORRECTNESS_INCONCLUSIVE", "PUBLIC_CORRECTNESS_FAILED",
+        "HIDDEN_CORRECTNESS_INCONCLUSIVE", "HIDDEN_CORRECTNESS_FAILED",
+        "SOURCE_RESTORATION_MISMATCH", "APK_REPRODUCIBILITY_MISMATCH"
+      ]}
+    },
+    "artifact_digests": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/digest"}
+    },
+    "content_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "build": {
+      "type": "object", "additionalProperties": false,
+      "required": ["execution_status", "command_sha256", "source_sha256", "clean"],
+      "properties": {
+        "execution_status": {"enum": ["EXECUTED", "NOT_RUN"]},
+        "command_sha256": {"$ref": "#/$defs/digest"},
+        "source_sha256": {"$ref": "#/$defs/digest"},
+        "clean": {"type": "boolean"},
+        "exit_code": {"type": "integer"},
+        "apk_sha256": {"$ref": "#/$defs/digest"},
+        "result_artifact_sha256": {"$ref": "#/$defs/digest"},
+        "reason_code": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"execution_status": {"const": "EXECUTED"}}}, "then": {"required": ["exit_code", "result_artifact_sha256"]}},
+        {"if": {"properties": {"execution_status": {"const": "NOT_RUN"}}}, "then": {"required": ["reason_code"]}},
+        {"if": {"required": ["exit_code"], "properties": {"exit_code": {"const": 0}}}, "then": {"required": ["apk_sha256"]}}
+      ]
+    },
+    "correctness": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "execution_status", "suite_id", "suite_sha256", "command_sha256",
+        "source_sha256"
+      ],
+      "properties": {
+        "execution_status": {"enum": ["EXECUTED", "NOT_RUN"]},
+        "suite_id": {"type": "string", "minLength": 1},
+        "suite_sha256": {"$ref": "#/$defs/digest"},
+        "command_sha256": {"$ref": "#/$defs/digest"},
+        "source_sha256": {"$ref": "#/$defs/digest"},
+        "apk_sha256": {"$ref": "#/$defs/digest"},
+        "exit_code": {"type": "integer"},
+        "test_count": {"type": "integer", "minimum": 0},
+        "failure_count": {"type": "integer", "minimum": 0},
+        "skipped_count": {"type": "integer", "minimum": 0},
+        "result_artifact_sha256": {"$ref": "#/$defs/digest"},
+        "reason_code": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"execution_status": {"const": "EXECUTED"}}}, "then": {"required": ["apk_sha256", "exit_code", "test_count", "failure_count", "skipped_count", "result_artifact_sha256"]}},
+        {"if": {"properties": {"execution_status": {"const": "NOT_RUN"}}}, "then": {"required": ["reason_code"]}}
+      ]
+    }
+  }
+}

@@ -7,6 +7,7 @@ htmlcov/
 .gradle/
 **/build/
 local.properties
+config/android-toolchains.local.toml
 *.jks
 *.keystore
 dist/
