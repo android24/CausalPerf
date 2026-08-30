@@ -83,6 +83,16 @@ class HiddenCorrectnessValidatorTest(unittest.TestCase):
         with self.assertRaisesRegex(validator.HiddenCorrectnessError, "detection tokens"):
             validator.validate(hidden, public)
 
+    def test_symlink_in_public_or_hidden_package_is_rejected(self):
+        hidden, public = self.copy_inputs()
+        link = public / "linked-app"
+        try:
+            link.symlink_to(public / "app")
+        except OSError:
+            self.skipTest("filesystem does not support symlinks")
+        with self.assertRaisesRegex(validator.HiddenCorrectnessError, "contains symlink"):
+            validator.validate(hidden, public)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -289,20 +289,20 @@ later without changing their public schemas.
 
 Phase 1A is frozen at `causalperf-contracts@0.6.0`; the additive Phase 1B
 contract bundle is `causalperf-contracts@0.7.0`. Phase 1B has started with the
-CPU-001 Android laboratory preflight. The first CPU startup task is an
-unbuilt implementation probe, not a frozen benchmark. No runnable optimization
-Agent, trace corpus, statistically calibrated task, or production evaluator is
-present yet.
+CPU-001 Android laboratory preflight and SDK-free guarded execution adapters.
+The first CPU startup task is an unbuilt implementation probe, not a frozen
+benchmark. No runnable optimization Agent, trace corpus, statistically
+calibrated task, or production evaluator is present yet.
 
 ```text
 D0 Concept and scope                 COMPLETE
-D1 Executable data contracts         PHASE 1A COMPLETE (37 locked schemas)
+D1 Executable data contracts         PHASE 1A COMPLETE (39 locked schemas)
 D2 Experiment execution protocol     PHASE 1A COMPLETE (simulated recovery)
 D3 Causal decision engine            PHASE 1A COMPLETE (computed C1 gates)
 D4 Statistical verifier              PHASE 1A COMPLETE (A1/B/A2 + vetoes)
 D5 Agent capability contracts        PHASE 1A COMPLETE (policy + audit)
 D6 Leakage isolation and auditor      PHASE 1A COMPLETE (split views + scans)
-D7 Reproducible Android task corpus   PHASE 1B STARTED (preflight + toolchain + dry-run contracts)
+D7 Reproducible Android task corpus   PHASE 1B STARTED (preflight + guarded public dry-run)
 ```
 
 “In progress” is deliberate: reference and synthetic execution does not count
@@ -318,12 +318,14 @@ Task -> Evidence -> Registered prediction -> A1/B/A2 measurements
 ```
 
 The active milestone is **Phase 1B — CPU-001 Calibration Pilot**. It now has a
-fail-closed Android preflight plus a verified, cross-platform Gradle Wrapper and
-static toolchain-drift gate. Its evaluator-only hidden correctness source and
-computed dry-run result contract are now SDK-free validated. Dependency
-resolution, compilation/device execution of hidden correctness, a real clean
-build, guarded Android execution, measurements and traces remain pending, so
-CPU-001 is still `IMPLEMENTED`, not `CALIBRATED`.
+fail-closed Android preflight plus a verified, cross-platform Gradle Wrapper,
+static toolchain-drift gate, guarded build/install adapters, bounded JUnit
+collection, public build/install/correctness/cleanup coordinator, guarded
+Macrobenchmark/Perfetto collection and evaluator hidden/restored closure. Its
+private correctness source and computed dry-run result contract are also
+SDK-free validated. Dependency resolution, real compilation/device execution
+and calibration evidence remain pending,
+so CPU-001 is still `IMPLEMENTED`, not `CALIBRATED`.
 
 ## Program-level acceptance criteria
 

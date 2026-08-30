@@ -35,9 +35,15 @@ def contained(root: Path, relative: str, label: str) -> Path:
     candidate = Path(relative)
     if candidate.is_absolute() or ".." in candidate.parts:
         raise HiddenCorrectnessError(f"unsafe {label} path: {relative}")
-    resolved = (root / candidate).resolve()
+    physical_root = root.resolve()
+    current = physical_root
+    for part in candidate.parts:
+        current = current / part
+        if current.is_symlink():
+            raise HiddenCorrectnessError(f"{label} path contains symlink: {relative}")
+    resolved = (physical_root / candidate).resolve()
     try:
-        resolved.relative_to(root.resolve())
+        resolved.relative_to(physical_root)
     except ValueError as error:
         raise HiddenCorrectnessError(f"{label} path escapes root: {relative}") from error
     return resolved
@@ -46,6 +52,12 @@ def contained(root: Path, relative: str, label: str) -> Path:
 def validate(hidden_root: Path, public_root: Path) -> dict:
     hidden_root = hidden_root.resolve()
     public_root = public_root.resolve()
+    for root, label in ((hidden_root, "hidden root"), (public_root, "public root")):
+        if not root.is_dir() or root.is_symlink():
+            raise HiddenCorrectnessError(f"{label} is not a real directory")
+        symlink = next((path for path in root.rglob("*") if path.is_symlink()), None)
+        if symlink is not None:
+            raise HiddenCorrectnessError(f"{label} contains symlink: {symlink}")
     document = json.loads((hidden_root / "suite.json").read_text(encoding="utf-8"))
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     jsonschema.Draft202012Validator(schema).validate(document)

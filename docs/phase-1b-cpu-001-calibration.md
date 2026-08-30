@@ -76,6 +76,13 @@ Completed without requiring an Android SDK:
    manifest and anti-detection checks are validated outside the public package;
 8. the Bench-owned `AndroidDryRunResult` v1 contract represents executed and
    unrun steps, exact artifact bindings and a deterministic computed outcome.
+9. a private evaluator materializer validates both packages, rejects symlinks,
+   copies the public task into a fresh physically disjoint workspace, overlays
+   only digest-sealed hidden files, and verifies that neither input changed;
+10. a structured Gradle build adapter and JUnit correctness parser are tested
+    with injected fake transports, and a Bench-owned builder composes their raw
+    facts into a validated `AndroidDryRunResult` without accepting a caller
+    selected PASS/FAIL status.
 
 Still required on the Android laboratory lane:
 
@@ -84,9 +91,9 @@ Still required on the Android laboratory lane:
    the scoring sandbox;
 3. build `:app:assembleBenchmark` from a clean workspace and record command,
    source-tree, toolchain and APK digests;
-4. materialize the sealed hidden overlay in an isolated evaluator workspace,
-   compile it, then run public and hidden checks on the explicitly resolved
-   device;
+4. use the implemented materializer to create the sealed hidden overlay in an
+   isolated evaluator workspace, compile it, then run public and hidden checks
+   on the explicitly resolved device;
 5. prove that baseline restoration reproduces the original source and APK
    identities and emit the first real `AndroidDryRunResult`.
 
@@ -98,17 +105,57 @@ No timing run begins until clean build and correctness pass.
 The exact pre-calibration evidence and failure semantics are defined in the
 [Android task dry-run contract](../causalperf-bench/docs/android-dry-run.md).
 
-### 1B.3 Guarded Android execution adapters — PENDING
+### 1B.3 Guarded Android execution adapters — SDK-FREE IMPLEMENTED; LAB VALIDATION PENDING
 
-Implement Gradle, ADB install, correctness and Macrobenchmark adapters behind
-the frozen `GuardedExecutionAdapter`. Commands must use exact argument vectors
-without a shell, remain bound to the policy's working directory, package and
-hashed device identity, and emit auditable artifact digests. Transport failures
-must preserve the existing retry and rollback semantics.
+Implemented in the SDK-free lane:
 
-The first end-to-end dry run stops after baseline build, install, correctness
-and cleanup. Intervention or private Ground Truth access is not part of that
-dry run.
+- an exact-argv `ProcessTransport` with no shell, explicit environment,
+  timeout and bounded returned output;
+- `GradleBuildAdapter` for clean baseline/treatment builds, immutable request
+  configuration, source mutation detection and content-addressed build/APK
+  outputs;
+- `GradleBuildExecutionAdapter` at the frozen build states, with tested
+  `GuardedExecutionAdapter` authorization and denial behavior;
+- POSIX and Windows task-relative Wrapper requests;
+- a trusted raw JUnit parser that rejects DTD/entity declarations, malformed
+  XML, zero-test false positives, assertion failures and incomplete process
+  outcomes;
+- public/hidden correctness normalization and deterministic dry-run result
+  composition owned by Bench rather than the Agent.
+- a policy-scoped ADB install adapter that verifies APK bytes, selects one
+  hashed device, verifies the installed package and never exposes the raw
+  serial in its durable result;
+- an idempotent trusted cleanup adapter that distinguishes an absent package
+  from an unavailable device, uninstalls only an explicit package allowlist and
+  verifies absence;
+- a Gradle correctness Runner that binds `ANDROID_SERIAL`, removes stale JUnit
+  output, bounds XML collection, and rejects source/APK drift;
+- a public-task dry-run coordinator covering build, pre-clean, authorized
+  install, public correctness and post-clean, including cleanup-on-failure.
+- a policy-authorized Macrobenchmark adapter for A1/B/A2 that keeps raw device
+  serials out of durable requests, rejects source/APK drift, clears stale
+  outputs and seals bounded AndroidX JSON and Perfetto trace files;
+- a deterministic normalizer that requires the exact benchmark, metric,
+  iteration count and one indexed trace per measurement before emitting a
+  schema-valid `MeasurementSet`;
+- an evaluator-only coordinator that materializes the sealed hidden suite,
+  executes hidden correctness, always cleans evaluator-owned packages, performs
+  a clean restored build and delegates the final verdict to Bench.
+
+Still required on the Android lane is real-device validation of every adapter
+and the first real evaluator execution. Correctness execution and cleanup
+remain trusted Runner gates rather than new Agent capabilities: the frozen
+Phase 1A tool contract has not been silently expanded to expose private
+evaluator tests or arbitrary uninstall operations to the Agent.
+
+All commands must remain bound to the policy's working directory, package and
+hashed device identity. Transport failures must preserve the existing retry
+and rollback semantics.
+
+The Agent-side public dry run stops after baseline build, install, public
+correctness and cleanup. Only after that process is closed may the evaluator
+materialize hidden correctness and perform the restored build. Intervention and
+private Ground Truth access are not part of either dry-run lane.
 
 ### 1B.4 A1/B/A2 calibration executor — PENDING
 
@@ -126,6 +173,11 @@ After 1B.2 and 1B.3 pass:
    snapshots with source and APK bindings;
 8. roll back and return `INCONCLUSIVE` on environment, integrity, correctness
    or baseline-drift failure.
+
+The per-block measurement transport and artifact normalizer required by this
+executor are now implemented. Session orchestration, the three-launch
+stabilization runner, reference intervention/rollback, inter-block environment
+snapshots and restart-safe checkpoint composition remain pending.
 
 At least three independent sessions are required. Extra retries cannot be added
 after observing an unfavorable effect.

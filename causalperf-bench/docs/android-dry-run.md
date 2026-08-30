@@ -75,10 +75,46 @@ startup state and first-screen readiness. SDK-free validation also rejects
 overlay replacement and evaluator/benchmark-detection tokens in application
 main source.
 
+`materialize_hidden_correctness.py` is the only implemented overlay path. It
+accepts physically disjoint public/private inputs and a fresh destination,
+rejects symlinks and existing destinations, copies rather than mutates the
+public task, verifies every hidden file before and after copy, and returns the
+suite, input-package and resulting-workspace digests. It runs only in the
+evaluator process after the Agent workspace is closed.
+
+The runner-side raw-fact path is now SDK-free executable with fake transports:
+
+- `GradleBuildAdapter` emits the command, source, build result and APK facts;
+- `CorrectnessReportParser` derives test/failure/skip counts from JUnit XML and
+  emits no caller-selected status;
+- `build_android_dry_run.py` normalizes executed/unrun facts, computes the
+  outcome and exact artifact registry, seals the document, then validates it.
+
+This separation keeps hidden-suite knowledge and final verdict computation out
+of the optimization Agent.
+
+The Agent-side `AndroidDryRunCoordinator` covers only the public execution
+slice: clean build, pre-clean, policy-authorized install, public correctness and
+post-clean. Its internal DEVELOPMENT summary is not an `AndroidDryRunResult`.
+The complete Bench result is created only after the evaluator separately runs
+the hidden overlay and restored build. Install and cleanup facts remain linked
+through the execution ledger/internal summary; `AndroidDryRunResult` v1 itself
+does not add fields that would mutate the released 0.7.0 contract.
+
+`execute_android_dry_run.py` now implements the evaluator closure as an
+in-process, dependency-injected coordinator. It refuses to materialize private
+inputs unless the public lane, public correctness and post-cleanup all passed;
+validates the hidden suite, run, workspace, source and APK bindings; performs
+cleanup even when hidden execution raises; and requires a clean RESTORED build.
+Only after those operations does it invoke the deterministic result builder.
+
 ## Current limitation
 
-The Schema, deterministic validator, CPU-001 hidden source and private manifest
-are implemented and SDK-free tested. No Android dry-run result exists yet: the
-hidden source has not compiled, the Gradle dependency locks and APK do not
+The Schema, deterministic validator/builder, CPU-001 hidden source, private
+manifest, isolated materializer, structured build facts, correctness parser
+and evaluator closure are implemented and SDK-free tested. The public
+install/correctness/cleanup orchestration is also implemented behind fake
+transports. No real Android dry-run result exists yet:
+the hidden source has not compiled, the Gradle dependency locks and APK do not
 exist, and no device correctness command has run. The first real result must be
 stored under `DEVELOPMENT`; synthetic unit-test fixtures never become evidence.
