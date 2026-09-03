@@ -106,6 +106,8 @@ class GradleBenchmarkRequest:
             raise ValueError("invalid Android package name")
         if any(not value for value in self.predeclared_exclusion_codes):
             raise ValueError("exclusion codes must be non-empty")
+        if "MISSING_REQUIRED_ARTIFACT" not in self.predeclared_exclusion_codes:
+            raise ValueError("missing-trace exclusion code must be preregistered")
         if "ANDROID_SERIAL" in self.environment:
             raise ValueError("ANDROID_SERIAL is injected by the trusted Runner, not persisted in the command")
         object.__setattr__(self, "args", tuple(self.args))
@@ -399,8 +401,9 @@ def _measurement_set(
         if index in indexed_traces:
             raise ValueError("MACROBENCHMARK_TRACE_INDEX_DUPLICATE")
         indexed_traces[index] = (path, data)
-    if set(indexed_traces) != set(range(request.expected_iterations)):
-        raise ValueError("MACROBENCHMARK_TRACE_SET_INCOMPLETE")
+    expected_trace_indices = set(range(request.expected_iterations))
+    if set(indexed_traces) - expected_trace_indices:
+        raise ValueError("MACROBENCHMARK_TRACE_SET_UNEXPECTED")
 
     artifact_by_path = {
         item["relative_path"]: item for item in artifacts if item["kind"] == "TRACE"
@@ -408,24 +411,26 @@ def _measurement_set(
     ids = _identifier(f"{request.run_id}-{request.arm}-{request.metric}")
     measurements = []
     for sequence, value in enumerate(values):
-        trace_path, _ = indexed_traces[sequence]
-        relative = trace_path.relative_to(request.task_root.resolve()).as_posix()
-        trace_artifact = artifact_by_path.get(relative)
-        if trace_artifact is None:
-            raise ValueError("MACROBENCHMARK_TRACE_ARTIFACT_MISSING")
-        measurements.append(
-            {
-                "id": f"M-{ids}-{sequence:03d}",
-                "sequence": sequence,
-                "value": value,
-                "measured_at": measured_at,
-                "environment_snapshot_id": request.environment_snapshot_id,
-                "source_sha256": request.source_sha256,
-                "apk_sha256": request.apk_sha256,
-                "trace_sha256": trace_artifact["sha256"],
-                "included": True,
-            }
-        )
+        measurement = {
+            "id": f"M-{ids}-{sequence:03d}",
+            "sequence": sequence,
+            "value": value,
+            "measured_at": measured_at,
+            "environment_snapshot_id": request.environment_snapshot_id,
+            "source_sha256": request.source_sha256,
+            "apk_sha256": request.apk_sha256,
+            "included": sequence in indexed_traces,
+        }
+        if sequence in indexed_traces:
+            trace_path, _ = indexed_traces[sequence]
+            relative = trace_path.relative_to(request.task_root.resolve()).as_posix()
+            trace_artifact = artifact_by_path.get(relative)
+            if trace_artifact is None:
+                raise ValueError("MACROBENCHMARK_TRACE_ARTIFACT_MISSING")
+            measurement["trace_sha256"] = trace_artifact["sha256"]
+        else:
+            measurement["exclusion_reason"] = "MISSING_REQUIRED_ARTIFACT"
+        measurements.append(measurement)
     result = {
         "schema_version": 1,
         "id": f"MS-{ids}",

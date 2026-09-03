@@ -157,7 +157,7 @@ correctness and cleanup. Only after that process is closed may the evaluator
 materialize hidden correctness and perform the restored build. Intervention and
 private Ground Truth access are not part of either dry-run lane.
 
-### 1B.4 A1/B/A2 calibration executor — PENDING
+### 1B.4 A1/B/A2 calibration executor — SDK-FREE PARTIALLY IMPLEMENTED
 
 After 1B.2 and 1B.3 pass:
 
@@ -174,13 +174,37 @@ After 1B.2 and 1B.3 pass:
 8. roll back and return `INCONCLUSIVE` on environment, integrity, correctness
    or baseline-drift failure.
 
-The per-block measurement transport and artifact normalizer required by this
-executor are now implemented. Session orchestration, the three-launch
-stabilization runner, reference intervention/rollback, inter-block environment
-snapshots and restart-safe checkpoint composition remain pending.
+Implemented without an Android SDK or device:
 
-At least three independent sessions are required. Extra retries cannot be added
-after observing an unfavorable effect.
+- `StartupStabilizationRunner` executes exactly three unmeasured cold launches,
+  never silently retries a failed launch, always attempts a final force-stop,
+  and binds its evidence to source, APK, device, environment and sequence;
+- every A1/B/A2 block obtains a fresh environment snapshot before
+  stabilization and stops before launch when the raw environment is invalid;
+- the executed benchmark request must hash-identically match the request
+  authorized before the block;
+- missing per-iteration traces are retained as excluded measurements with the
+  preregistered `MISSING_REQUIRED_ARTIFACT` code rather than being discarded;
+- `CalibrationBlockStore` atomically persists environment, stabilization,
+  benchmark, MeasurementSet and artifact-registry facts for restart-safe
+  verification, and rejects cross-document substitution or trace references;
+- `CalibrationProtocolExecutionAdapter` seals the initial statistical,
+  environment and sequence commitment, registers prediction/intervention only
+  after A1, prevents intervention before registration, and verifies A1/B/A2
+  order, sample limits, raw environment policy, source/APK roles, device
+  identity, trace uniqueness and exact baseline restoration;
+- the existing `ExperimentController`, Runtime Policy, ToolCall audit, Ledger
+  and atomic execution checkpoint have been exercised together for a complete
+  synthetic A1/B/A2 session with exactly three experiment-budget reservations.
+
+Still pending are the real reference-patch execution adapter, treatment and
+restored clean build/install/correctness composition at their device states,
+mechanism-query execution, real-device validation and at least three
+independent calibration sessions. The current synthetic sessions prove control
+flow and fail-closed invariants only; they are never calibration evidence.
+
+At least three independent real-device sessions are required. Extra retries
+cannot be added after observing an unfavorable effect.
 
 ### 1B.5 Calibration decision and protocol freeze — PENDING
 

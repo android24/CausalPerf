@@ -129,6 +129,10 @@ percentage speedup never overrides a failed correctness or integrity gate.
   metric, iteration and trace identities agree.
 - Raw device serials are injected only at transport time and never enter the
   durable benchmark ToolRequest.
+- Each calibration block requires a fresh raw environment gate and exactly
+  three evidenced, unmeasured cold launches; failed launches are not retried.
+- A1/B/A2 block records are atomically persisted and cross-validated before
+  session verification, so process restart does not depend on in-memory facts.
 - Agent-generated patches require human review before publication or merge.
 - Benchmark, correctness, and Ground Truth files are outside the mutation scope.
 - A hypothesis records evidence that would falsify it, not only evidence that

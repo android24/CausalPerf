@@ -130,10 +130,11 @@ retention.
 The normalizer selects exactly one declared benchmark and metric, requires the
 AndroidX `repeatIterations` and `metrics.<metric>.runs` values to agree, and
 requires one uniquely indexed trace for every included iteration. Only then is
-a schema-valid `MeasurementSet` produced. Missing, duplicate or unindexed
-traces, malformed/non-finite values, unexpected iteration count, output limits,
-timeout, process failure and input drift all return `INCONCLUSIVE` without
-manufacturing a partial measurement set.
+a schema-valid `MeasurementSet` produced. A specifically indexed missing trace
+is retained as an excluded sample with the preregistered
+`MISSING_REQUIRED_ARTIFACT` code. Duplicate/unindexed traces,
+malformed/non-finite values, unexpected iteration count, output limits, timeout,
+process failure and input drift remain fail-closed.
 
 The raw device serial is absent from the durable `run_benchmark` ToolRequest.
 Policy authorizes the hashed device identity; the trusted Runner injects the
@@ -152,6 +153,30 @@ before asking the deterministic Bench builder to create the complete
 `AndroidDryRunResult`. Cleanup failure prevents creation of a passing result,
 and hidden exceptions still trigger cleanup.
 
+## Calibration block and session execution
+
+`StartupStabilizationRunner` issues exactly three explicit ADB cold launches
+before each measured block. It checks that the package is installed, performs
+force-stop, `am start -W`, Home and final force-stop operations with exact argv,
+requires observable launch completion, does not auto-retry, and verifies that
+source and APK bytes did not change. The raw serial remains transport-only.
+
+`CalibrationMeasurementExecutionAdapter` composes a fresh environment probe,
+stabilization evidence and the already authorized Macrobenchmark request for
+each of `MEASURING_A1`, `MEASURING_B` and `MEASURING_A2`. The actual command,
+device, package, partition and sequence must reproduce the pre-execution
+ToolRequest digest. Passing blocks are atomically persisted by
+`CalibrationBlockStore`; nested environment, stabilization, benchmark,
+MeasurementSet and trace registries are cross-checked again on load.
+
+`CalibrationProtocolExecutionAdapter` records only environment/statistical/
+sequence commitments at session open. Prediction and intervention digests enter
+the Ledger after A1 and must be present before the intervention state. Session
+verification recomputes order, included/invalid counts, raw environment-policy
+compliance, cross-arm ID/trace uniqueness, treatment source change, and exact
+A1/A2 source/APK restoration. It produces a CALIBRATION verification summary,
+not a causal or calibratability decision.
+
 ## Host configuration
 
 SDK/JDK/Gradle paths stay late-bound through the host-specific toolchain TOML
@@ -167,5 +192,6 @@ correctness, cleanup, restored-build composition, Macrobenchmark result
 collection and one-to-one Perfetto trace binding. It has not yet been exercised
 against a real connected Android device and therefore has not produced a real
 APK, JUnit result, `MeasurementSet`, trace artifact or `AndroidDryRunResult`.
-The remaining work is laboratory validation plus session-level A1/B/A2
-orchestration, intervention/rollback wiring and inter-block environment probes.
+The remaining work is laboratory validation, concrete reference-patch and
+restored build/install/correctness wiring, mechanism queries and the three real
+sessions required before the Phase 1B.5 decision.

@@ -99,7 +99,9 @@ class GradleBenchmarkRunnerTest(unittest.TestCase):
             "warmup_count": 3,
             "stabilization_evidence_sha256": "c" * 64,
             "max_invalid_percent": 10,
-            "predeclared_exclusion_codes": ("THERMAL", "DEVICE_DISCONNECT"),
+            "predeclared_exclusion_codes": (
+                "THERMAL", "DEVICE_DISCONNECT", "MISSING_REQUIRED_ARTIFACT"
+            ),
             "benchmark_name": "coldStartup",
             "benchmark_class": "dev.causalperf.startup.cpu.macrobenchmark.ColdStartupBenchmark",
         }
@@ -161,7 +163,7 @@ class GradleBenchmarkRunnerTest(unittest.TestCase):
         ).run(self.request())
         self.assertEqual(attempt.status, "PASS")
 
-    def test_missing_trace_keeps_raw_result_but_is_inconclusive(self):
+    def test_missing_trace_is_retained_as_preregistered_invalid_sample(self):
         def incomplete(spec):
             self.write_outputs(spec)
             next(self.results.glob("*_iter001.perfetto-trace")).unlink()
@@ -169,9 +171,11 @@ class GradleBenchmarkRunnerTest(unittest.TestCase):
         attempt = GradleBenchmarkRunner(
             EffectTransport(ProcessOutput(0), incomplete), clock=Clock()
         ).run(self.request())
-        self.assertEqual(attempt.status, "INCONCLUSIVE")
-        self.assertIn("MACROBENCHMARK_TRACE_SET_INCOMPLETE", attempt.reason_codes)
-        self.assertIsNone(attempt.measurement_set)
+        self.assertEqual(attempt.status, "PASS")
+        invalid = attempt.measurement_set["measurements"][1]
+        self.assertFalse(invalid["included"])
+        self.assertEqual(invalid["exclusion_reason"], "MISSING_REQUIRED_ARTIFACT")
+        self.assertNotIn("trace_sha256", invalid)
         self.assertEqual(len(attempt.artifacts), 3)
 
     def test_iteration_mismatch_is_inconclusive(self):

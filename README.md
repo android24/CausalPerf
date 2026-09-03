@@ -323,8 +323,11 @@ static toolchain-drift gate, guarded build/install adapters, bounded JUnit
 collection, public build/install/correctness/cleanup coordinator, guarded
 Macrobenchmark/Perfetto collection and evaluator hidden/restored closure. Its
 private correctness source and computed dry-run result contract are also
-SDK-free validated. Dependency resolution, real compilation/device execution
-and calibration evidence remain pending,
+SDK-free validated. The Phase 1B.4 SDK-free lane additionally composes fresh
+per-block environment probes, three unmeasured stabilization launches,
+A1/B/A2 measurements, policy/audit/ledger integration and restart-safe block
+records. Dependency resolution, concrete reference-patch/restored-device
+execution and real calibration evidence remain pending,
 so CPU-001 is still `IMPLEMENTED`, not `CALIBRATED`.
 
 ## Program-level acceptance criteria

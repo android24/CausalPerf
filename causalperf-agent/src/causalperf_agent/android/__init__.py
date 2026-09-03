@@ -56,6 +56,19 @@ from .benchmark import (
     GradleBenchmarkRequest,
     GradleBenchmarkRunner,
 )
+from .stabilization import (
+    StartupStabilizationAttempt,
+    StartupStabilizationRequest,
+    StartupStabilizationRunner,
+)
+from .calibration import (
+    CalibrationBlockAttempt,
+    CalibrationBlockPlan,
+    CalibrationBlockStore,
+    CalibrationMeasurementExecutionAdapter,
+    CalibrationProtocolExecutionAdapter,
+    CalibrationSessionProtocol,
+)
 
 __all__ = [
     "AndroidEnvironmentCollector",
@@ -101,4 +114,13 @@ __all__ = [
     "GradleBenchmarkExecutionAdapter",
     "GradleBenchmarkRequest",
     "GradleBenchmarkRunner",
+    "StartupStabilizationAttempt",
+    "StartupStabilizationRequest",
+    "StartupStabilizationRunner",
+    "CalibrationBlockAttempt",
+    "CalibrationBlockPlan",
+    "CalibrationBlockStore",
+    "CalibrationMeasurementExecutionAdapter",
+    "CalibrationProtocolExecutionAdapter",
+    "CalibrationSessionProtocol",
 ]
